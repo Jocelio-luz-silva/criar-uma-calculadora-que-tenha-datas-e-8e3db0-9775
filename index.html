@@ -91,8 +91,78 @@
     .op-btn:hover { background: #e8eaf6; border-color: #3949ab; }
     .op-btn.active { background: #1a237e; color: #fff; border-color: #1a237e; }
 
+    /* ===== MODO MONETARIO ===== */
+    .modo-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .modo-row label {
+      font-size: .82rem;
+      font-weight: 600;
+      color: #444;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      user-select: none;
+    }
+    .toggle-moeda {
+      position: relative;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+    .toggle-moeda input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-moeda .slider {
+      position: absolute;
+      inset: 0;
+      background: #ccc;
+      border-radius: 22px;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .toggle-moeda .slider::before {
+      content: '';
+      position: absolute;
+      width: 16px; height: 16px;
+      left: 3px; top: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform .2s;
+    }
+    .toggle-moeda input:checked + .slider { background: #1a237e; }
+    .toggle-moeda input:checked + .slider::before { transform: translateX(18px); }
+    .moeda-badge {
+      background: #e8eaf6;
+      color: #1a237e;
+      font-size: .75rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 12px;
+      letter-spacing: .3px;
+    }
+    .moeda-badge.ativo { background: #1a237e; color: #fff; }
+
     /* ===== VALOR INPUT ROW ===== */
     #valor-input-row { display: flex; gap: 8px; margin-bottom: 8px; }
+    #valor-prefix {
+      display: none;
+      align-items: center;
+      padding: 9px 8px 9px 12px;
+      background: #e8eaf6;
+      border: 1.5px solid #c5cae9;
+      border-right: none;
+      border-radius: 7px 0 0 7px;
+      font-size: .92rem;
+      font-weight: 700;
+      color: #1a237e;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    #valor-prefix.visible { display: flex; }
     #valor-input-row input {
       flex: 1;
       padding: 9px 12px;
@@ -102,6 +172,10 @@
       outline: none;
       transition: border .2s;
       background: #fafafa;
+    }
+    #valor-input-row input.com-prefix {
+      border-radius: 0 7px 7px 0;
+      border-left: none;
     }
     #valor-input-row input:focus { border-color: #3949ab; background: #fff; }
     #valor-input-row input.invalid { border-color: #e53935; background: #fff8f8; }
@@ -124,6 +198,95 @@
     #msg-titulo-longo { color: #f57c00; font-size: .75rem; margin-top: 3px; display: none; }
     #msg-titulo-longo.visible { display: block; }
 
+    /* ===== AMBIGUIDADE DECIMAL ===== */
+    #msg-ambiguidade {
+      display: none;
+      background: #fff8e1;
+      border: 1.5px solid #ffd600;
+      border-radius: 7px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      font-size: .82rem;
+      color: #5d4037;
+    }
+    #msg-ambiguidade.visible { display: block; }
+    #msg-ambiguidade .amb-acoes { display: flex; gap: 8px; margin-top: 7px; flex-wrap: wrap; }
+    #msg-ambiguidade .amb-btn {
+      padding: 5px 12px;
+      border: 1.5px solid #bbb;
+      border-radius: 5px;
+      background: #fff;
+      cursor: pointer;
+      font-size: .82rem;
+      font-weight: 600;
+      transition: background .15s;
+    }
+    #msg-ambiguidade .amb-btn:hover { background: #e8eaf6; border-color: #3949ab; color: #1a237e; }
+    #msg-ambiguidade .amb-btn.primary { background: #1a237e; color: #fff; border-color: #1a237e; }
+    #msg-ambiguidade .amb-btn.primary:hover { background: #283593; }
+
+    /* ===== SELEÇÃO DE IMPRESSORA ===== */
+    #impressora-panel {
+      display: none;
+      background: #f3e5f5;
+      border: 1.5px solid #ce93d8;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+    }
+    #impressora-panel.visible { display: block; }
+    #impressora-panel .imp-titulo {
+      font-size: .82rem;
+      font-weight: 700;
+      color: #6a1b9a;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    #impressora-panel .imp-info {
+      font-size: .75rem;
+      color: #7b5ea7;
+      margin-bottom: 8px;
+      background: #ede7f6;
+      border-radius: 5px;
+      padding: 5px 8px;
+    }
+    #select-impressora {
+      width: 100%;
+      padding: 7px 10px;
+      border: 1.5px solid #ce93d8;
+      border-radius: 6px;
+      font-size: .88rem;
+      margin-bottom: 8px;
+      background: #fff;
+      outline: none;
+    }
+    #select-impressora:focus { border-color: #6a1b9a; }
+    #btn-confirmar-impressao {
+      padding: 8px 18px;
+      background: #6a1b9a;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: .88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .18s;
+    }
+    #btn-confirmar-impressao:hover { background: #4a148c; }
+    #btn-cancelar-impressao {
+      padding: 8px 14px;
+      background: #fff;
+      color: #555;
+      border: 1.5px solid #ccc;
+      border-radius: 6px;
+      font-size: .88rem;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    #btn-cancelar-impressao:hover { background: #f5f5f5; }
+
     /* ===== LISTA DE VALORES ===== */
     #lista-valores-wrap {
       max-height: 260px;
@@ -142,18 +305,37 @@
     .valor-row {
       display: flex;
       align-items: center;
-      padding: 7px 12px;
+      padding: 6px 10px;
       border-bottom: 1px solid #efefef;
-      gap: 8px;
+      gap: 0;
       animation: fadeIn .15s;
     }
     .valor-row:last-child { border-bottom: none; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
-    .valor-row .vr-simbolo { width: 22px; text-align: center; color: #3949ab; font-weight: 700; font-size: 1rem; }
-    .valor-row .vr-num { flex: 1; text-align: right; font-family: 'Courier New', monospace; font-size: 1rem; color: #222; }
+
+    .valor-row .vr-simbolo {
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #3949ab;
+      min-width: 14px;
+      text-align: right;
+      padding-right: 6px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+    .valor-row .vr-num {
+      flex: 0 0 auto;
+      min-width: 13ch;
+      text-align: right;
+      font-family: 'Courier New', monospace;
+      font-size: 1rem;
+      color: #222;
+      padding-right: 8px;
+    }
     .valor-row .vr-del {
       background: none; border: none; color: #e53935; cursor: pointer; font-size: 1rem;
-      padding: 2px 6px; border-radius: 4px; transition: background .15s;
+      padding: 2px 4px; border-radius: 4px; transition: background .15s; flex-shrink: 0;
     }
     .valor-row .vr-del:hover { background: #fce4ec; }
 
@@ -257,7 +439,7 @@
     }
     #btn-modal-cancelar:hover { background: #f5f5f5; }
 
-    /* ===== DOCUMENTO DE PRE-VISUALIZACAO (modal e preview rápida) ===== */
+    /* ===== DOCUMENTO DE PRE-VISUALIZACAO ===== */
     .doc-preview-wrap {
       font-family: 'Courier New', monospace;
       font-size: .92rem;
@@ -280,21 +462,32 @@
       color: #444;
     }
     .doc-coluna {
-      width: 100%;
+      width: auto;
+      margin-left: auto;
       border-collapse: collapse;
       margin-bottom: 6px;
     }
     .doc-coluna td {
-      padding: 2px 4px;
+      padding: 2px 0;
       font-family: 'Courier New', monospace;
     }
-    .doc-coluna .td-simbolo { width: 30px; text-align: right; padding-right: 8px; color: #1a237e; font-weight: 700; }
-    .doc-coluna .td-valor  { text-align: right; min-width: 140px; }
+    .doc-coluna .td-simbolo {
+      width: 16px;
+      text-align: right;
+      padding-right: 6px;
+      color: #1a237e;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .doc-coluna .td-valor  { text-align: right; min-width: 13ch; padding-left: 0; }
+    .doc-coluna .doc-sep-row td { padding: 0; height: 6px; border-top: 1.5px solid #333; }
     .doc-separador { border-top: 1.5px solid #333; margin: 4px 0; }
     .doc-total-row { font-weight: 800; font-size: 1.05rem; border-top: 3px double #111; }
     .doc-total-row td { padding-top: 4px; }
     .doc-operacao { font-size: .78rem; color: #555; text-align: right; margin-top: 8px; }
     .doc-rodape { font-size: .73rem; color: #888; text-align: center; margin-top: 18px; border-top: 1px solid #ddd; padding-top: 8px; }
+    /* Cabeçalho de moeda na coluna do documento */
+    .doc-moeda-header { font-size: .75rem; color: #1a237e; font-weight: 700; text-align: right; margin-bottom: 2px; }
 
     /* ===== PAINEL DIREITO ===== */
     #painel-direito .preview-inline {
@@ -339,13 +532,13 @@
     #lista-valores-wrap::-webkit-scrollbar { width: 5px; }
     #lista-valores-wrap::-webkit-scrollbar-thumb { background: #c5cae9; border-radius: 4px; }
 
-    /* ===== @media print: MOSTRA APENAS O DOC-IMPRESSAO ===== */
+    /* ===== @media print ===== */
     @media print {
       body > *               { display: none !important; }
       #doc-impressao-print   { display: block !important; }
     }
 
-    /* ===== DOCUMENTO REAL DE IMPRESSAO (hidden na tela) ===== */
+    /* ===== DOCUMENTO REAL DE IMPRESSAO ===== */
     #doc-impressao-print {
       display: none;
       font-family: 'Courier New', monospace;
@@ -369,21 +562,29 @@
       margin-bottom: 5mm;
     }
     #doc-impressao-print table.ip-coluna {
-      width: 100%;
+      width: auto;
+      margin-left: auto;
       border-collapse: collapse;
     }
     #doc-impressao-print table.ip-coluna td {
       font-family: 'Courier New', monospace;
       font-size: 11pt;
-      padding: 1mm 2mm;
+      padding: 1mm 0;
     }
-    #doc-impressao-print table.ip-coluna .td-s { width: 12mm; text-align: right; padding-right: 3mm; }
-    #doc-impressao-print table.ip-coluna .td-v { text-align: right; }
+    #doc-impressao-print table.ip-coluna .td-s {
+      width: 6mm;
+      text-align: right;
+      padding-right: 2mm;
+    }
+    #doc-impressao-print table.ip-coluna .td-v { text-align: right; padding-left: 0; min-width: 32mm; }
+    #doc-impressao-print table.ip-coluna .ip-sep-row td { padding: 0; height: 3mm; border-top: 1.5pt solid #000; }
     #doc-impressao-print .ip-linha-sep { border: none; border-top: 1.5pt solid #000; margin: 2mm 0; }
     #doc-impressao-print .ip-total-row { font-weight: bold; font-size: 12pt; border-top: 2.5pt double #000; }
     #doc-impressao-print .ip-total-row td { padding-top: 2mm; }
     #doc-impressao-print .ip-operacao  { font-size: 9pt; text-align: right; color: #444; margin-top: 3mm; }
     #doc-impressao-print .ip-rodape    { font-size: 8pt; text-align: center; color: #777; margin-top: 10mm; border-top: 0.5pt solid #999; padding-top: 3mm; }
+    /* Cabeçalho R$ na impressão */
+    #doc-impressao-print .ip-moeda-header { font-size: 9pt; text-align: right; color: #444; margin-bottom: 2mm; }
   </style>
 </head>
 <body>
@@ -415,8 +616,8 @@
         </div>
         <div class="form-group">
           <label for="input-hora">Hora (HH:MM)</label>
-          <input type="text" id="input-hora" placeholder="HH:MM" maxlength="5" />
-          <span class="field-error" id="err-hora">Formato inválido. Use HH:MM</span>
+          <input type="text" id="input-hora" placeholder="HH:MM" />
+          <span class="field-error" id="err-hora">Formato inválido. Use HH:MM (00–23 : 00–59)</span>
         </div>
       </div>
     </div>
@@ -433,12 +634,51 @@
 
     <div class="card">
       <h2>🔢 Valores em Coluna</h2>
+
+      <!-- MODO MONETÁRIO -->
+      <div class="modo-row">
+        <label for="toggle-moeda">
+          <span class="toggle-moeda">
+            <input type="checkbox" id="toggle-moeda" />
+            <span class="slider"></span>
+          </span>
+          Modo monetário (R$)
+        </label>
+        <span class="moeda-badge" id="moeda-badge">Desativado</span>
+      </div>
+
       <div id="valor-input-row">
+        <span id="valor-prefix">R$</span>
         <input type="text" id="input-valor" placeholder="Ex: 1234.56 ou 1.234,56 ou -99" />
         <button id="btn-add-valor" title="Adicionar valor (Enter)">+</button>
       </div>
       <div id="msg-valor-invalido">⚠ Valor inválido. Use números com ponto ou vírgula decimal (ex: 1234.56, 1234,56 ou 1.234,56).</div>
       <div id="msg-limite">🚫 Limite de 500 valores atingido. Remova valores antes de adicionar novos.</div>
+
+      <!-- AVISO DE AMBIGUIDADE -->
+      <div id="msg-ambiguidade">
+        <span id="amb-texto"></span>
+        <div class="amb-acoes">
+          <button class="amb-btn primary" id="amb-btn-milhar"></button>
+          <button class="amb-btn" id="amb-btn-decimal"></button>
+          <button class="amb-btn" id="amb-btn-cancelar">Cancelar</button>
+        </div>
+      </div>
+
+      <!-- PAINEL DE SELEÇÃO DE IMPRESSORA -->
+      <div id="impressora-panel">
+        <div class="imp-titulo">🖨️ Selecionar Impressora</div>
+        <div class="imp-info">ℹ️ O navegador não permite listar impressoras do sistema diretamente por segurança. Selecione abaixo a impressora desejada e clique em "Imprimir" — o diálogo do sistema abrirá com essa impressora pré-selecionada quando possível. Impressoras disponíveis: USB, rede local, PDF virtual.</div>
+        <select id="select-impressora">
+          <option value="__system__">🖨️ Impressora padrão do sistema</option>
+          <option value="__pdf__">📄 Salvar como PDF</option>
+          <option value="__custom__">✏️ Escolher no diálogo do sistema...</option>
+        </select>
+        <div style="display:flex;align-items:center;gap:0">
+          <button id="btn-confirmar-impressao">🖨️ Imprimir</button>
+          <button id="btn-cancelar-impressao">Cancelar</button>
+        </div>
+      </div>
 
       <div id="lista-valores-wrap">
         <div id="lista-valores-vazia">Nenhum valor adicionado ainda.</div>
@@ -489,21 +729,32 @@
 (function () {
   'use strict';
 
-  const STORAGE_KEY = 'jls_calc_sessao';
-  const LIMITE_VALORES = 500;
-  const TITULO_MAX_RECOMENDADO = 50;
+  var STORAGE_KEY = 'jls_calc_sessao';
+  var LIMITE_VALORES = 500;
+  var TITULO_MAX_RECOMENDADO = 50;
 
-  let estado = {
+  var estado = {
     valores: [],
     operacao: 'soma',
     resultado: null,
+    resultadoOk: true,
+    resultadoMsg: '',
     operacaoDoResultado: null,
     dataSelecionada: '',
     horaSelecionada: '',
-    tituloDocumento: ''
+    tituloDocumento: '',
+    modoMonetario: false
   };
 
-  const $ = function(id) { return document.getElementById(id); };
+  // Guarda o valor bruto pendente de resolução de ambiguidade
+  var ambiguidade = {
+    ativo: false,
+    rawOriginal: '',
+    valorMilhar: 0,
+    valorDecimal: 0
+  };
+
+  var $ = function(id) { return document.getElementById(id); };
 
   function padZ(n, d) { return String(n).padStart(d, '0'); }
 
@@ -515,26 +766,39 @@
   }
 
   /**
-   * Normaliza string de número para formato JS (ponto decimal).
-   * Retorna string normalizada ou null se não for possível normalizar.
+   * Detecta se a string é ambígua: padrão X.XXX (sem vírgula decimal)
+   * Ex: "1.234" pode ser milhar 1234 ou decimal 1.234
+   * Retorna objeto { ambiguo, valorMilhar, valorDecimal } ou null se não ambíguo.
    */
+  function detectarAmbiguidade(str) {
+    if (str === null || str === undefined) return null;
+    var s = str.trim();
+    // Padrão ambíguo: [-]D{1,3}.D{3} SEM nenhuma vírgula e sem mais pontos
+    // Ex: "1.234", "-1.234", "12.345"
+    if (/^-?\d{1,3}\.\d{3}$/.test(s)) {
+      var valMilhar = parseFloat(s.replace(/\./g, ''));
+      var valDecimal = parseFloat(s);
+      // Só é realmente ambíguo se ambos são números válidos e diferentes
+      if (!isNaN(valMilhar) && !isNaN(valDecimal) && valMilhar !== valDecimal) {
+        return { ambiguo: true, valorMilhar: valMilhar, valorDecimal: valDecimal };
+      }
+    }
+    return null;
+  }
+
   function normalizarDecimal(str) {
     if (str === null || str === undefined) return null;
     var s = str.trim();
     if (s === '') return null;
-    // Formato europeu/BR com separador de milhar ponto e decimal vírgula: 1.234,56
+    // Padrão milhar: X.XXX,XX ou X.XXX (este último pode ser ambíguo — tratado em detectarAmbiguidade)
     if (/^-?\d{1,3}(\.\d{3})+(,\d+)?$/.test(s)) {
       s = s.replace(/\./g, '').replace(/,/g, '.');
       return s;
     }
-    // Apenas vírgula como decimal: 1234,56
     s = s.replace(/,/g, '.');
     return s;
   }
 
-  /**
-   * Valida se a string representa um número válido (inteiro, decimal, negativo).
-   */
   function validarNumero(str) {
     if (str === null || str === undefined) return false;
     var normalizado = normalizarDecimal(str);
@@ -565,13 +829,33 @@
     return h >= 0 && h <= 23 && mn >= 0 && mn <= 59;
   }
 
+  /** Verifica se os campos data/hora estão preenchidos E válidos */
+  function camposDataHoraValidos() {
+    var dataVal  = $('input-data').value.trim();
+    var horaVal  = $('input-hora').value.trim();
+    var dataOk   = dataVal  === '' || (dataVal.length  === 10 && validarData(dataVal));
+    var horaOk   = horaVal  === '' || (horaVal.length  === 5  && validarHora(horaVal));
+    return { dataOk: dataOk, horaOk: horaOk, ok: dataOk && horaOk };
+  }
+
   function formatarNumero(n) {
     if (n === null || n === undefined) return '—';
+    if (estado.modoMonetario) {
+      return n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
     return n.toLocaleString('pt-BR', { maximumFractionDigits: 8 });
   }
 
+  /**
+   * Formata número para documento.
+   * No modo monetário NÃO inclui prefixo R$ aqui — o prefixo é adicionado
+   * apenas no cabeçalho da coluna, evitando redundância.
+   */
   function formatarNumeroDoc(n) {
     if (n === null || n === undefined) return '—';
+    if (estado.modoMonetario) {
+      return n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
     return n.toLocaleString('pt-BR', { maximumFractionDigits: 10, useGrouping: true });
   }
 
@@ -587,6 +871,9 @@
 
   function arredondarResultado(valor, valores) {
     if (!isFinite(valor) || isNaN(valor)) return valor;
+    if (estado.modoMonetario) {
+      return parseFloat(valor.toFixed(2));
+    }
     var maxCasas = 0;
     valores.forEach(function(v) {
       var s = v.toString();
@@ -616,23 +903,28 @@
         if (s.dataSelecionada) estado.dataSelecionada = s.dataSelecionada;
         if (s.horaSelecionada) estado.horaSelecionada = s.horaSelecionada;
         if (s.tituloDocumento !== undefined) estado.tituloDocumento = s.tituloDocumento;
+        if (s.modoMonetario !== undefined) estado.modoMonetario = !!s.modoMonetario;
       }
     } catch(e) {}
   }
 
   /**
-   * Executa o cálculo e atualiza estado.resultado.
-   * Retorna { ok: true } ou { ok: false, msg: '...' }
+   * Calcula o resultado e armazena em estado.
+   * Não chama renderizações — apenas atualiza estado.resultado e retorna {ok, msg}.
    */
   function calcular() {
     var vals = estado.valores;
     if (vals.length === 0) {
       estado.resultado = null;
+      estado.resultadoOk = false;
+      estado.resultadoMsg = 'Nenhum valor inserido.';
       estado.operacaoDoResultado = null;
-      return { ok: false, msg: 'Nenhum valor inserido.' };
+      return { ok: false, msg: estado.resultadoMsg };
     }
     if (vals.length === 1) {
-      estado.resultado = vals[0];
+      estado.resultado = arredondarResultado(vals[0], vals);
+      estado.resultadoOk = true;
+      estado.resultadoMsg = '';
       estado.operacaoDoResultado = estado.operacao;
       return { ok: true };
     }
@@ -648,8 +940,10 @@
       else if (op === 'divisao') {
         if (v === 0) {
           estado.resultado = null;
+          estado.resultadoOk = false;
+          estado.resultadoMsg = 'Erro: Divisão por zero no valor ' + (i + 1) + '.';
           estado.operacaoDoResultado = null;
-          return { ok: false, msg: 'Erro: Divisão por zero no valor ' + (i + 1) + '.' };
+          return { ok: false, msg: estado.resultadoMsg };
         }
         acc /= v;
       }
@@ -657,24 +951,30 @@
 
     if (isNaN(acc)) {
       estado.resultado = null;
+      estado.resultadoOk = false;
+      estado.resultadoMsg = 'Erro: O resultado não é um número válido (NaN).';
       estado.operacaoDoResultado = null;
-      return { ok: false, msg: 'Erro: O resultado não é um número válido (NaN).' };
+      return { ok: false, msg: estado.resultadoMsg };
     }
 
     if (!isFinite(acc)) {
       estado.resultado = null;
+      estado.resultadoOk = false;
+      estado.resultadoMsg = 'Erro: O resultado excede o limite numérico (Overflow).';
       estado.operacaoDoResultado = null;
-      return { ok: false, msg: 'Erro: O resultado excede o limite numérico (Overflow).' };
+      return { ok: false, msg: estado.resultadoMsg };
     }
 
     acc = arredondarResultado(acc, vals);
     estado.resultado = acc;
+    estado.resultadoOk = true;
+    estado.resultadoMsg = '';
     estado.operacaoDoResultado = op;
     return { ok: true };
   }
 
   function escHTML(str) {
-    if (str === null || str === undefined) return '';
+    if (str === null || str === undefined) return '—';
     return String(str)
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
@@ -683,8 +983,9 @@
   }
 
   /**
-   * Gera o HTML do documento.
-   * mode: 'screen' (preview rápida e modal) | 'print' (impressão real)
+   * Gera HTML do documento.
+   * No modo monetário, o símbolo R$ aparece UMA VEZ no cabeçalho da coluna,
+   * e não em cada linha de valor, evitando redundância com o símbolo de operação.
    */
   function gerarHTMLDocumento(mode) {
     var titulo = estado.tituloDocumento || 'CÁLCULO';
@@ -695,42 +996,52 @@
     var vals   = estado.valores;
     var res    = estado.resultado;
     var html   = '';
+    var modoMoeda = estado.modoMonetario;
+    var labelModo = modoMoeda ? ' (Monetário R$)' : '';
 
     if (mode === 'print') {
       html += '<div class="ip-titulo">' + escHTML(titulo) + '</div>';
       html += '<div class="ip-data-hora">Data: ' + escHTML(data) + ' &nbsp;|&nbsp; Hora: ' + escHTML(hora) + '</div>';
+      if (modoMoeda) {
+        // R$ aparece apenas uma vez no cabeçalho da coluna
+        html += '<div class="ip-moeda-header">R$</div>';
+      }
       html += '<table class="ip-coluna">';
       vals.forEach(function(v, i) {
-        var s = i === 0 ? '\u00a0' : escHTML(simb);
+        var s = i === 0 ? '&nbsp;' : escHTML(simb);
+        // formatarNumeroDoc NÃO inclui R$ — apenas o número formatado
         html += '<tr><td class="td-s">' + s + '</td><td class="td-v">' + escHTML(formatarNumeroDoc(v)) + '</td></tr>';
       });
-      html += '</table>';
-      html += '<hr class="ip-linha-sep" />';
+      html += '<tr class="ip-sep-row"><td colspan="2"></td></tr>';
       if (res !== null && res !== undefined) {
-        html += '<table class="ip-coluna"><tr class="ip-total-row"><td class="td-s">=</td><td class="td-v">' + escHTML(formatarNumeroDoc(res)) + '</td></tr></table>';
+        html += '<tr class="ip-total-row"><td class="td-s">=</td><td class="td-v">' + escHTML(formatarNumeroDoc(res)) + '</td></tr>';
       } else {
-        html += '<table class="ip-coluna"><tr class="ip-total-row"><td class="td-s">=</td><td class="td-v">Erro no cálculo</td></tr></table>';
+        html += '<tr class="ip-total-row"><td class="td-s">=</td><td class="td-v">Erro no cálculo</td></tr>';
       }
-      html += '<div class="ip-operacao">Operação: ' + escHTML(nomeOp(op)) + '</div>';
+      html += '</table>';
+      html += '<div class="ip-operacao">Operação: ' + escHTML(nomeOp(op)) + escHTML(labelModo) + '</div>';
       html += '<div class="ip-rodape">Gerado por JLS SOFT AI FACTORY — Calculadora Avançada</div>';
     } else {
-      // mode === 'screen': usado para preview rápida e modal
       html += '<div class="doc-preview-wrap">';
       html += '<div class="doc-titulo">' + escHTML(titulo) + '</div>';
       html += '<div class="doc-data-hora">Data: <b>' + escHTML(data) + '</b> &nbsp;|&nbsp; Hora: <b>' + escHTML(hora) + '</b></div>';
+      if (modoMoeda) {
+        // R$ aparece uma vez no cabeçalho da coluna
+        html += '<div class="doc-moeda-header">R$</div>';
+      }
       html += '<table class="doc-coluna">';
       vals.forEach(function(v, i) {
-        var s = i === 0 ? '\u00a0' : escHTML(simb);
+        var s = i === 0 ? '&nbsp;' : escHTML(simb);
         html += '<tr><td class="td-simbolo">' + s + '</td><td class="td-valor">' + escHTML(formatarNumeroDoc(v)) + '</td></tr>';
       });
-      html += '</table>';
-      html += '<div class="doc-separador"></div>';
+      html += '<tr class="doc-sep-row"><td colspan="2"></td></tr>';
       if (res !== null && res !== undefined) {
-        html += '<table class="doc-coluna"><tr class="doc-total-row"><td class="td-simbolo">=</td><td class="td-valor">' + escHTML(formatarNumeroDoc(res)) + '</td></tr></table>';
+        html += '<tr class="doc-total-row"><td class="td-simbolo">=</td><td class="td-valor">' + escHTML(formatarNumeroDoc(res)) + '</td></tr>';
       } else {
-        html += '<table class="doc-coluna"><tr class="doc-total-row"><td class="td-simbolo">=</td><td class="td-valor" style="color:#e53935">—</td></tr></table>';
+        html += '<tr class="doc-total-row"><td class="td-simbolo">=</td><td class="td-valor" style="color:#e53935">—</td></tr>';
       }
-      html += '<div class="doc-operacao">Operação aplicada: ' + escHTML(nomeOp(op)) + '</div>';
+      html += '</table>';
+      html += '<div class="doc-operacao">Operação aplicada: ' + escHTML(nomeOp(op)) + escHTML(labelModo) + '</div>';
       html += '<div class="doc-rodape">Gerado por JLS SOFT AI FACTORY — Calculadora Avançada</div>';
       html += '</div>';
     }
@@ -758,7 +1069,7 @@
 
       var spanSimb = document.createElement('span');
       spanSimb.className = 'vr-simbolo';
-      spanSimb.textContent = i === 0 ? '\u00a0' : simb;
+      spanSimb.textContent = i === 0 ? '' : simb;
 
       var spanNum = document.createElement('span');
       spanNum.className = 'vr-num';
@@ -771,15 +1082,26 @@
       (function(idx) {
         btnDel.addEventListener('click', function() {
           estado.valores.splice(idx, 1);
+          var r;
           if (estado.valores.length > 0) {
-            calcular();
+            r = calcular();
           } else {
             estado.resultado = null;
+            estado.resultadoOk = false;
+            estado.resultadoMsg = '';
             estado.operacaoDoResultado = null;
+            r = { ok: true }; // lista vazia, sem erro
           }
           salvarEstado();
           renderLista();
-          renderResultado();
+          // Exibe erro no span-resultado se o cálculo após remoção falhou
+          if (!r.ok) {
+            var span = $('span-resultado');
+            span.textContent = r.msg;
+            span.className = 'res-valor erro';
+          } else {
+            renderResultado();
+          }
           renderPreviewRapida();
           mostrarMsgLimite();
         });
@@ -798,7 +1120,7 @@
       span.textContent = '—';
       span.className = 'res-valor';
     } else {
-      span.textContent = formatarNumero(estado.resultado);
+      span.textContent = (estado.modoMonetario ? 'R$ ' : '') + formatarNumero(estado.resultado);
       span.className = 'res-valor';
     }
   }
@@ -810,8 +1132,9 @@
   }
 
   /**
-   * Atualiza a pré-visualização rápida no painel direito.
-   * Se houver valores, recalcula automaticamente para manter o resultado sincronizado.
+   * Renderiza a pré-visualização rápida.
+   * NÃO chama calcular() internamente — o chamador deve garantir que
+   * calcular() foi chamado antes quando necessário.
    */
   function renderPreviewRapida() {
     var box = $('preview-rapida');
@@ -819,9 +1142,26 @@
       box.innerHTML = '<div class="preview-vazio">Adicione valores e clique em <b>Calcular</b> ou <b>Pré-visualizar</b> para ver o documento aqui.</div>';
       return;
     }
-    // Recalcula silenciosamente para manter preview sempre atualizado
-    calcular();
     box.innerHTML = gerarHTMLDocumento('screen');
+  }
+
+  function atualizarUIModeMoeda() {
+    var badge = $('moeda-badge');
+    var prefix = $('valor-prefix');
+    var inputValor = $('input-valor');
+    if (estado.modoMonetario) {
+      badge.textContent = 'Ativado 💰';
+      badge.classList.add('ativo');
+      prefix.classList.add('visible');
+      inputValor.classList.add('com-prefix');
+      inputValor.placeholder = 'Ex: 1.250,00 ou 1250.50';
+    } else {
+      badge.textContent = 'Desativado';
+      badge.classList.remove('ativo');
+      prefix.classList.remove('visible');
+      inputValor.classList.remove('com-prefix');
+      inputValor.placeholder = 'Ex: 1234.56 ou 1.234,56 ou -99';
+    }
   }
 
   var toastTimer = null;
@@ -833,15 +1173,70 @@
     toastTimer = setTimeout(function() { el.classList.remove('show'); }, dur || 2800);
   }
 
-  /**
-   * Aplica máscara de data (DD/MM/AAAA) ao elemento input.
-   * Formata enquanto o usuário digita, sem deslocar o cursor indevidamente.
-   */
+  // ===== AMBIGUIDADE: UI =====
+  function fecharAmbiguidade() {
+    ambiguidade.ativo = false;
+    $('msg-ambiguidade').classList.remove('visible');
+    $('input-valor').value = '';
+    $('input-valor').focus();
+  }
+
+  function confirmarValorAmbiguo(num) {
+    fecharAmbiguidade();
+    if (estado.valores.length >= LIMITE_VALORES) {
+      mostrarMsgLimite();
+      showToast('🚫 Limite de ' + LIMITE_VALORES + ' valores atingido.');
+      return;
+    }
+    if (estado.modoMonetario) {
+      num = parseFloat(num.toFixed(2));
+    }
+    estado.valores.push(num);
+    var r = calcular();
+    salvarEstado();
+    renderLista();
+    if (!r.ok) {
+      $('span-resultado').textContent = r.msg;
+      $('span-resultado').className = 'res-valor erro';
+    } else {
+      renderResultado();
+    }
+    renderPreviewRapida();
+    mostrarMsgLimite();
+  }
+
+  function mostrarAmbiguidade(raw, valMilhar, valDecimal) {
+    ambiguidade.ativo = true;
+    ambiguidade.rawOriginal = raw;
+    ambiguidade.valorMilhar = valMilhar;
+    ambiguidade.valorDecimal = valDecimal;
+
+    var fmt = estado.modoMonetario;
+    var fmtMilhar  = valMilhar.toLocaleString('pt-BR', fmt ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : { maximumFractionDigits: 8 });
+    var fmtDecimal = valDecimal.toLocaleString('pt-BR', { maximumFractionDigits: 8 });
+
+    $('amb-texto').textContent = '⚠ O valor "' + raw + '" é ambíguo. Ele pode ser:';
+    $('amb-btn-milhar').textContent  = '✔ Milhar: ' + fmtMilhar  + (fmt ? ' (R$)' : '');
+    $('amb-btn-decimal').textContent = '✔ Decimal: ' + fmtDecimal;
+    $('msg-ambiguidade').classList.add('visible');
+    $('input-valor').classList.remove('invalid');
+    $('msg-valor-invalido').classList.remove('visible');
+  }
+
+  // ===== IMPRESSORA: UI =====
+  function mostrarPainelImpressora() {
+    $('impressora-panel').classList.add('visible');
+    $('select-impressora').focus();
+  }
+
+  function fecharPainelImpressora() {
+    $('impressora-panel').classList.remove('visible');
+  }
+
+  // ===== MASCARAS =====
   function mascaraData(el) {
     el.addEventListener('input', function () {
-      var orig = this.value;
-      // Extrai apenas dígitos
-      var digits = orig.replace(/\D/g, '').slice(0, 8);
+      var digits = this.value.replace(/\D/g, '').slice(0, 8);
       var formatted = '';
       if (digits.length <= 2) {
         formatted = digits;
@@ -869,7 +1264,6 @@
       }
     });
 
-    // Permite apagar o separador '/' junto com o dígito anterior
     el.addEventListener('keydown', function(e) {
       if (e.key === 'Backspace') {
         var pos = this.selectionStart;
@@ -904,11 +1298,9 @@
     });
   }
 
-  /**
-   * Aplica máscara de hora (HH:MM) ao elemento input.
-   */
   function mascaraHora(el) {
     el.addEventListener('input', function () {
+      // Remove não-dígitos, limita a 4 dígitos
       var digits = this.value.replace(/\D/g, '').slice(0, 4);
       var formatted = '';
       if (digits.length <= 2) {
@@ -916,11 +1308,23 @@
       } else {
         formatted = digits.slice(0, 2) + ':' + digits.slice(2);
       }
+      // Controle de comprimento via JS (remove maxlength do HTML)
+      if (formatted.length > 5) { formatted = formatted.slice(0, 5); }
       this.value = formatted;
       estado.horaSelecionada = formatted;
       salvarEstado();
 
       var errEl = $('err-hora');
+      // Validação progressiva: ao preencher os 2 primeiros dígitos da hora, verifica imediatamente
+      if (digits.length >= 2) {
+        var horaDigit = parseInt(digits.slice(0, 2), 10);
+        if (horaDigit > 23) {
+          this.classList.add('invalid');
+          errEl.classList.add('visible');
+          return; // já alerta sem esperar os minutos
+        }
+      }
+      // Validação completa ao preencher os 4 dígitos (HH:MM)
       if (formatted.length === 5) {
         if (!validarHora(formatted)) {
           this.classList.add('invalid');
@@ -970,13 +1374,19 @@
     $('input-data').value   = estado.dataSelecionada;
     $('input-hora').value   = estado.horaSelecionada;
     $('input-titulo').value = estado.tituloDocumento || '';
+    $('toggle-moeda').checked = estado.modoMonetario;
 
     document.querySelectorAll('.op-btn').forEach(function(btn) {
       btn.classList.toggle('active', btn.dataset.op === estado.operacao);
     });
 
+    atualizarUIModeMoeda();
     renderLista();
     renderResultado();
+    // renderPreviewRapida requer calcular() antes se há valores
+    if (estado.valores.length > 0) {
+      calcular();
+    }
     renderPreviewRapida();
     mostrarMsgLimite();
   }
@@ -997,12 +1407,43 @@
     mascaraData($('input-data'));
     mascaraHora($('input-hora'));
 
+    // ===== ESCAPE fecha o modal =====
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        if ($('modal-overlay').classList.contains('open')) {
+          $('modal-overlay').classList.remove('open');
+        }
+        if ($('impressora-panel').classList.contains('visible')) {
+          fecharPainelImpressora();
+        }
+        if ($('msg-ambiguidade').classList.contains('visible')) {
+          fecharAmbiguidade();
+        }
+      }
+    });
+
+    $('toggle-moeda').addEventListener('change', function () {
+      estado.modoMonetario = this.checked;
+      salvarEstado();
+      atualizarUIModeMoeda();
+      if (estado.valores.length > 0) {
+        calcular();
+      }
+      renderLista();
+      renderResultado();
+      renderPreviewRapida();
+      if (estado.modoMonetario) {
+        showToast('💰 Modo monetário ativado — valores formatados em R$');
+      } else {
+        showToast('Modo monetário desativado');
+      }
+    });
+
     document.querySelectorAll('.op-btn').forEach(function(btn) {
       btn.addEventListener('click', function () {
         document.querySelectorAll('.op-btn').forEach(function(b) { b.classList.remove('active'); });
         this.classList.add('active');
         estado.operacao = this.dataset.op;
-        // Recalcula com nova operação
         if (estado.valores.length > 0) {
           calcular();
         } else {
@@ -1016,10 +1457,37 @@
       });
     });
 
+    // ===== AMBIGUIDADE: botões =====
+    $('amb-btn-milhar').addEventListener('click', function() {
+      confirmarValorAmbiguo(ambiguidade.valorMilhar);
+    });
+    $('amb-btn-decimal').addEventListener('click', function() {
+      confirmarValorAmbiguo(ambiguidade.valorDecimal);
+    });
+    $('amb-btn-cancelar').addEventListener('click', function() {
+      fecharAmbiguidade();
+    });
+
+    // ===== IMPRESSORA: botões =====
+    $('btn-confirmar-impressao').addEventListener('click', function() {
+      fecharPainelImpressora();
+      var sel = $('select-impressora').value;
+      showToast('🖨️ Abrindo diálogo de impressão' + (sel !== '__custom__' ? ' — selecione "' + $('select-impressora').options[$('select-impressora').selectedIndex].text + '" no diálogo do sistema.' : '.'), 3500);
+      setTimeout(function() { executarImpressao(); }, 300);
+    });
+    $('btn-cancelar-impressao').addEventListener('click', function() {
+      fecharPainelImpressora();
+    });
+
     function adicionarValor() {
       var inp = $('input-valor');
       var raw = inp.value.trim();
       var msgEl = $('msg-valor-invalido');
+
+      // Fecha painel de ambiguidade pendente se usuário digitou novo valor
+      if (ambiguidade.ativo) {
+        fecharAmbiguidade();
+      }
 
       if (raw === '') {
         inp.classList.add('invalid');
@@ -1042,27 +1510,41 @@
         return;
       }
 
+      // Detecta ambiguidade ANTES de adicionar
+      var amb = detectarAmbiguidade(raw);
+      if (amb && amb.ambiguo) {
+        mostrarAmbiguidade(raw, amb.valorMilhar, amb.valorDecimal);
+        return; // aguarda escolha do usuário
+      }
+
       inp.classList.remove('invalid');
       msgEl.classList.remove('visible');
 
       var normalizado = normalizarDecimal(raw);
       var num = parseFloat(normalizado);
       if (isNaN(num)) {
-        // Segurança extra: nunca deve chegar aqui se validarNumero passou
         inp.classList.add('invalid');
         msgEl.classList.add('visible');
         inp.focus();
         return;
       }
 
+      if (estado.modoMonetario) {
+        num = parseFloat(num.toFixed(2));
+      }
+
       estado.valores.push(num);
-      // Recalcula automaticamente após adicionar
-      calcular();
+      var r = calcular();
       salvarEstado();
       inp.value = '';
       inp.focus();
       renderLista();
-      renderResultado();
+      if (!r.ok) {
+        $('span-resultado').textContent = r.msg;
+        $('span-resultado').className = 'res-valor erro';
+      } else {
+        renderResultado();
+      }
       renderPreviewRapida();
       mostrarMsgLimite();
     }
@@ -1100,13 +1582,22 @@
 
     $('btn-previsualizar').addEventListener('click', function () {
       if (estado.valores.length === 0) { showToast('⚠ Adicione ao menos um valor para pré-visualizar.'); return; }
+
+      // Verifica data/hora antes de pré-visualizar
+      var dhVal = camposDataHoraValidos();
+      if (!dhVal.ok) {
+        if (!dhVal.dataOk) { $('input-data').classList.add('invalid'); $('err-data').classList.add('visible'); }
+        if (!dhVal.horaOk) { $('input-hora').classList.add('invalid'); $('err-hora').classList.add('visible'); }
+        showToast('⚠ Corrija os campos de data/hora antes de pré-visualizar.', 3500);
+        return;
+      }
+
       var r = calcular();
       salvarEstado();
       renderResultado();
       renderPreviewRapida();
       if (!r.ok) {
         showToast('❌ ' + r.msg, 3500);
-        // Ainda abre o modal mostrando o erro no documento
       }
       $('doc-previsualizar').innerHTML = gerarHTMLDocumento('screen');
       $('modal-overlay').classList.add('open');
@@ -1114,6 +1605,16 @@
 
     $('btn-imprimir').addEventListener('click', function () {
       if (estado.valores.length === 0) { showToast('⚠ Adicione ao menos um valor para imprimir.'); return; }
+
+      // Verifica data/hora antes de imprimir
+      var dhVal = camposDataHoraValidos();
+      if (!dhVal.ok) {
+        if (!dhVal.dataOk) { $('input-data').classList.add('invalid'); $('err-data').classList.add('visible'); }
+        if (!dhVal.horaOk) { $('input-hora').classList.add('invalid'); $('err-hora').classList.add('visible'); }
+        showToast('⚠ Corrija os campos de data/hora antes de imprimir.', 3500);
+        return;
+      }
+
       var r = calcular();
       salvarEstado();
       if (!r.ok) {
@@ -1124,7 +1625,8 @@
       }
       renderResultado();
       renderPreviewRapida();
-      executarImpressao();
+      // Mostra painel de seleção de impressora
+      mostrarPainelImpressora();
     });
 
     $('btn-limpar').addEventListener('click', function () {
@@ -1133,29 +1635,36 @@
       estado.valores            = [];
       estado.operacao           = 'soma';
       estado.resultado          = null;
+      estado.resultadoOk        = true;
+      estado.resultadoMsg       = '';
       estado.operacaoDoResultado = null;
       estado.dataSelecionada    = dh.data;
       estado.horaSelecionada    = dh.hora;
       estado.tituloDocumento    = '';
+      estado.modoMonetario      = false;
       try { sessionStorage.removeItem(STORAGE_KEY); } catch(e) {}
 
       $('input-titulo').value = '';
       $('input-data').value   = dh.data;
       $('input-hora').value   = dh.hora;
       $('input-valor').value  = '';
+      $('toggle-moeda').checked = false;
       $('input-valor').classList.remove('invalid');
       $('msg-valor-invalido').classList.remove('visible');
       $('msg-limite').classList.remove('visible');
       $('msg-titulo-longo').classList.remove('visible');
+      $('msg-ambiguidade').classList.remove('visible');
       $('input-data').classList.remove('invalid');
       $('input-hora').classList.remove('invalid');
       $('err-data').classList.remove('visible');
       $('err-hora').classList.remove('visible');
+      fecharPainelImpressora();
 
       document.querySelectorAll('.op-btn').forEach(function(b) {
         b.classList.toggle('active', b.dataset.op === 'soma');
       });
 
+      atualizarUIModeMoeda();
       renderLista();
       renderResultado();
       renderPreviewRapida();
@@ -1170,15 +1679,58 @@
 
     $('btn-modal-imprimir').addEventListener('click', function () {
       $('modal-overlay').classList.remove('open');
-      setTimeout(function() { executarImpressao(); }, 150);
+      // Verifica data/hora antes de imprimir a partir do modal
+      var dhVal = camposDataHoraValidos();
+      if (!dhVal.ok) {
+        if (!dhVal.dataOk) { $('input-data').classList.add('invalid'); $('err-data').classList.add('visible'); }
+        if (!dhVal.horaOk) { $('input-hora').classList.add('invalid'); $('err-hora').classList.add('visible'); }
+        showToast('⚠ Corrija os campos de data/hora antes de imprimir.', 3500);
+        return;
+      }
+      setTimeout(function() { mostrarPainelImpressora(); }, 200);
     });
   }
 
+  /**
+   * Executa a impressão usando window.print().
+   * Usa window.matchMedia('print') para detectar eventos do ciclo de impressão
+   * e informar o usuário sobre início e possíveis falhas.
+   */
   function executarImpressao() {
     $('doc-impressao-print').innerHTML = gerarHTMLDocumento('print');
+
+    // Feedback via matchMedia print
+    var mediaQueryList = window.matchMedia('print');
+    var jaNotificouInicio = false;
+    function handlePrintChange(mql) {
+      if (mql.matches) {
+        // Entrou no modo de impressão
+        jaNotificouInicio = true;
+      } else {
+        // Saiu do modo de impressão (usuário confirmou ou cancelou)
+        if (jaNotificouInicio) {
+          showToast('✅ Documento enviado para impressão. Verifique sua impressora.', 3500);
+        }
+        if (mediaQueryList.removeEventListener) {
+          mediaQueryList.removeEventListener('change', handlePrintChange);
+        } else if (mediaQueryList.removeListener) {
+          mediaQueryList.removeListener(handlePrintChange);
+        }
+      }
+    }
+    if (mediaQueryList.addEventListener) {
+      mediaQueryList.addEventListener('change', handlePrintChange);
+    } else if (mediaQueryList.addListener) {
+      mediaQueryList.addListener(handlePrintChange);
+    }
+
     requestAnimationFrame(function () {
       requestAnimationFrame(function () {
-        window.print();
+        try {
+          window.print();
+        } catch(e) {
+          showToast('❌ Não foi possível abrir o diálogo de impressão. Verifique as permissões do navegador.', 4000);
+        }
       });
     });
   }
