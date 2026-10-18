@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculadora Avançada – JLS SOFT AI FACTORY</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header id="app-header">
+  <div class="logo">🧮</div>
+  <div>
+    <h1>Calculadora Avançada com Impressão</h1>
+    <p>JLS SOFT AI FACTORY — Operações em coluna, data/hora ajustável e impressão profissional</p>
+  </div>
+</header>
+
+<main id="app-main">
+
+  <div id="painel-esquerdo">
+
+    <div class="card" style="margin-bottom:18px">
+      <h2>📄 Documento</h2>
+      <div class="form-group">
+        <label for="input-titulo">Título / Identificação <span style="font-weight:400;color:#888">(opcional — padrão: CÁLCULO, máx. 50 caracteres recomendados)</span></label>
+        <input type="text" id="input-titulo" placeholder="Ex: Orçamento, Relatório, Cálculo..." maxlength="80" />
+        <span id="msg-titulo-longo">⚠ Títulos com mais de 50 caracteres podem ser cortados ou quebrar o layout na impressão.</span>
+      </div>
+      <div class="dh-row">
+        <div class="form-group">
+          <label for="input-data">Data (DD/MM/AAAA)</label>
+          <input type="text" id="input-data" placeholder="DD/MM/AAAA" maxlength="10" />
+          <span class="field-error" id="err-data">Formato inválido. Use DD/MM/AAAA</span>
+        </div>
+        <div class="form-group">
+          <label for="input-hora">Hora (HH:MM)</label>
+          <input type="text" id="input-hora" placeholder="HH:MM" />
+          <span class="field-error" id="err-hora">Formato inválido. Use HH:MM (00–23 : 00–59)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:18px">
+      <h2>⚙️ Operação Matemática</h2>
+      <div class="op-group">
+        <button class="op-btn active" data-op="soma"          title="Soma">+</button>
+        <button class="op-btn"        data-op="subtracao"     title="Subtração">−</button>
+        <button class="op-btn"        data-op="multiplicacao" title="Multiplicação">×</button>
+        <button class="op-btn"        data-op="divisao"       title="Divisão">÷</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🔢 Valores em Coluna</h2>
+
+      <!-- MODO MONETÁRIO -->
+      <div class="modo-row">
+        <label for="toggle-moeda">
+          <span class="toggle-moeda">
+            <input type="checkbox" id="toggle-moeda" />
+            <span class="slider"></span>
+          </span>
+          Modo monetário (R$)
+        </label>
+        <span class="moeda-badge" id="moeda-badge">Desativado</span>
+      </div>
+
+      <div id="valor-input-row">
+        <span id="valor-prefix">R$</span>
+        <input type="text" id="input-valor" placeholder="Ex: 1234.56 ou 1.234,56 ou -99" />
+        <button id="btn-add-valor" title="Adicionar valor (Enter)">+</button>
+      </div>
+      <div id="msg-valor-invalido">⚠ Valor inválido. Use números com ponto ou vírgula decimal (ex: 1234.56, 1234,56 ou 1.234,56).</div>
+      <div id="msg-limite">🚫 Limite de 500 valores atingido. Remova valores antes de adicionar novos.</div>
+
+      <!-- AVISO DE AMBIGUIDADE -->
+      <div id="msg-ambiguidade">
+        <span id="amb-texto"></span>
+        <div class="amb-acoes">
+          <button class="amb-btn primary" id="amb-btn-milhar"></button>
+          <button class="amb-btn" id="amb-btn-decimal"></button>
+          <button class="amb-btn" id="amb-btn-cancelar">Cancelar</button>
+        </div>
+      </div>
+
+      <!-- PAINEL DE SELEÇÃO DE IMPRESSORA -->
+      <div id="impressora-panel">
+        <div class="imp-titulo">🖨️ Selecionar Impressora</div>
+        <div class="imp-info">ℹ️ O navegador não permite listar impressoras do sistema diretamente por segurança. Selecione abaixo a impressora desejada e clique em "Imprimir" — o diálogo do sistema abrirá com essa impressora pré-selecionada quando possível. Impressoras disponíveis: USB, rede local, PDF virtual.</div>
+        <select id="select-impressora">
+          <option value="__system__">🖨️ Impressora padrão do sistema</option>
+          <option value="__pdf__">📄 Salvar como PDF</option>
+          <option value="__custom__">✏️ Escolher no diálogo do sistema...</option>
+        </select>
+        <div style="display:flex;align-items:center;gap:0">
+          <button id="btn-confirmar-impressao">🖨️ Imprimir</button>
+          <button id="btn-cancelar-impressao">Cancelar</button>
+        </div>
+      </div>
+
+      <div id="lista-valores-wrap">
+        <div id="lista-valores-vazia">Nenhum valor adicionado ainda.</div>
+      </div>
+
+      <div id="resultado-box">
+        <span class="res-label">Resultado:</span>
+        <span class="res-valor" id="span-resultado">—</span>
+      </div>
+
+      <div class="btn-acao-row">
+        <button class="btn-acao" id="btn-calcular">🟰 Calcular</button>
+        <button class="btn-acao" id="btn-previsualizar">👁 Pré-visualizar</button>
+        <button class="btn-acao" id="btn-imprimir">🖨️ Imprimir</button>
+        <button class="btn-acao" id="btn-limpar">🗑 Limpar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="painel-direito">
+    <div class="card" style="height:100%">
+      <h2>👁 Pré-visualização Rápida</h2>
+      <div id="preview-rapida" class="preview-inline">
+        <div class="preview-vazio">Adicione valores e clique em <b>Calcular</b> ou <b>Pré-visualizar</b> para ver o documento aqui.</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div id="modal-overlay">
+  <div id="modal-box">
+    <button id="btn-modal-fechar" title="Fechar">✕</button>
+    <h3>👁 Pré-visualização do Documento</h3>
+    <div id="doc-previsualizar"></div>
+    <div id="modal-footer">
+      <button id="btn-modal-cancelar">Fechar</button>
+      <button id="btn-modal-imprimir">🖨️ Imprimir agora</button>
+    </div>
+  </div>
+</div>
+
+<div id="doc-impressao-print"></div>
+
+<div id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
