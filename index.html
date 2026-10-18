@@ -4,7 +4,588 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Calculadora Avançada – JLS SOFT AI FACTORY</title>
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; color: #222; }
+
+    /* ===== HEADER ===== */
+    #app-header {
+      background: linear-gradient(135deg, #1a237e 0%, #283593 60%, #3949ab 100%);
+      color: #fff;
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.25);
+    }
+    #app-header .logo { font-size: 2rem; }
+    #app-header h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: .5px; }
+    #app-header p  { font-size: .78rem; opacity: .8; margin-top: 2px; }
+
+    /* ===== MAIN LAYOUT ===== */
+    #app-main {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      padding: 24px 32px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    @media (max-width: 900px) { #app-main { grid-template-columns: 1fr; } }
+
+    /* ===== CARD ===== */
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.10);
+      padding: 24px;
+    }
+    .card h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1a237e;
+      border-bottom: 2px solid #e8eaf6;
+      padding-bottom: 10px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ===== FORM GROUPS ===== */
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: .82rem; font-weight: 600; color: #444; margin-bottom: 5px; }
+    .form-group input[type="text"],
+    .form-group select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1.5px solid #c5cae9;
+      border-radius: 7px;
+      font-size: .95rem;
+      outline: none;
+      transition: border .2s;
+      background: #fafafa;
+    }
+    .form-group input[type="text"]:focus,
+    .form-group select:focus { border-color: #3949ab; background: #fff; }
+    .form-group input.invalid { border-color: #e53935 !important; background: #fff8f8; }
+    .form-group .field-error { color: #e53935; font-size: .75rem; margin-top: 3px; display: none; }
+    .form-group .field-error.visible { display: block; }
+
+    /* ===== OPERACAO BUTTONS ===== */
+    .op-group { display: flex; gap: 8px; flex-wrap: wrap; }
+    .op-btn {
+      flex: 1;
+      min-width: 60px;
+      padding: 9px 6px;
+      border: 1.5px solid #c5cae9;
+      border-radius: 7px;
+      background: #f5f5f5;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .18s;
+      color: #333;
+    }
+    .op-btn:hover { background: #e8eaf6; border-color: #3949ab; }
+    .op-btn.active { background: #1a237e; color: #fff; border-color: #1a237e; }
+
+    /* ===== MODO MONETARIO ===== */
+    .modo-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .modo-row label {
+      font-size: .82rem;
+      font-weight: 600;
+      color: #444;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      user-select: none;
+    }
+    .toggle-moeda {
+      position: relative;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+    .toggle-moeda input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-moeda .slider {
+      position: absolute;
+      inset: 0;
+      background: #ccc;
+      border-radius: 22px;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .toggle-moeda .slider::before {
+      content: '';
+      position: absolute;
+      width: 16px; height: 16px;
+      left: 3px; top: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform .2s;
+    }
+    .toggle-moeda input:checked + .slider { background: #1a237e; }
+    .toggle-moeda input:checked + .slider::before { transform: translateX(18px); }
+    .moeda-badge {
+      background: #e8eaf6;
+      color: #1a237e;
+      font-size: .75rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 12px;
+      letter-spacing: .3px;
+    }
+    .moeda-badge.ativo { background: #1a237e; color: #fff; }
+
+    /* ===== VALOR INPUT ROW ===== */
+    #valor-input-row { display: flex; gap: 8px; margin-bottom: 8px; }
+    #valor-prefix {
+      display: none;
+      align-items: center;
+      padding: 9px 8px 9px 12px;
+      background: #e8eaf6;
+      border: 1.5px solid #c5cae9;
+      border-right: none;
+      border-radius: 7px 0 0 7px;
+      font-size: .92rem;
+      font-weight: 700;
+      color: #1a237e;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    #valor-prefix.visible { display: flex; }
+    #valor-input-row input {
+      flex: 1;
+      padding: 9px 12px;
+      border: 1.5px solid #c5cae9;
+      border-radius: 7px;
+      font-size: .95rem;
+      outline: none;
+      transition: border .2s;
+      background: #fafafa;
+    }
+    #valor-input-row input.com-prefix {
+      border-radius: 0 7px 7px 0;
+      border-left: none;
+    }
+    #valor-input-row input:focus { border-color: #3949ab; background: #fff; }
+    #valor-input-row input.invalid { border-color: #e53935; background: #fff8f8; }
+    #btn-add-valor {
+      padding: 9px 18px;
+      background: #3949ab;
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .18s;
+    }
+    #btn-add-valor:hover { background: #1a237e; }
+    #msg-valor-invalido { color: #e53935; font-size: .75rem; margin-bottom: 6px; display: none; }
+    #msg-valor-invalido.visible { display: block; }
+    #msg-limite { color: #e65100; font-size: .75rem; margin-bottom: 6px; display: none; font-weight: 600; }
+    #msg-limite.visible { display: block; }
+    #msg-titulo-longo { color: #f57c00; font-size: .75rem; margin-top: 3px; display: none; }
+    #msg-titulo-longo.visible { display: block; }
+
+    /* ===== AMBIGUIDADE DECIMAL ===== */
+    #msg-ambiguidade {
+      display: none;
+      background: #fff8e1;
+      border: 1.5px solid #ffd600;
+      border-radius: 7px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      font-size: .82rem;
+      color: #5d4037;
+    }
+    #msg-ambiguidade.visible { display: block; }
+    #msg-ambiguidade .amb-acoes { display: flex; gap: 8px; margin-top: 7px; flex-wrap: wrap; }
+    #msg-ambiguidade .amb-btn {
+      padding: 5px 12px;
+      border: 1.5px solid #bbb;
+      border-radius: 5px;
+      background: #fff;
+      cursor: pointer;
+      font-size: .82rem;
+      font-weight: 600;
+      transition: background .15s;
+    }
+    #msg-ambiguidade .amb-btn:hover { background: #e8eaf6; border-color: #3949ab; color: #1a237e; }
+    #msg-ambiguidade .amb-btn.primary { background: #1a237e; color: #fff; border-color: #1a237e; }
+    #msg-ambiguidade .amb-btn.primary:hover { background: #283593; }
+
+    /* ===== SELEÇÃO DE IMPRESSORA ===== */
+    #impressora-panel {
+      display: none;
+      background: #f3e5f5;
+      border: 1.5px solid #ce93d8;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+    }
+    #impressora-panel.visible { display: block; }
+    #impressora-panel .imp-titulo {
+      font-size: .82rem;
+      font-weight: 700;
+      color: #6a1b9a;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    #impressora-panel .imp-info {
+      font-size: .75rem;
+      color: #7b5ea7;
+      margin-bottom: 8px;
+      background: #ede7f6;
+      border-radius: 5px;
+      padding: 5px 8px;
+    }
+    #select-impressora {
+      width: 100%;
+      padding: 7px 10px;
+      border: 1.5px solid #ce93d8;
+      border-radius: 6px;
+      font-size: .88rem;
+      margin-bottom: 8px;
+      background: #fff;
+      outline: none;
+    }
+    #select-impressora:focus { border-color: #6a1b9a; }
+    #btn-confirmar-impressao {
+      padding: 8px 18px;
+      background: #6a1b9a;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: .88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .18s;
+    }
+    #btn-confirmar-impressao:hover { background: #4a148c; }
+    #btn-cancelar-impressao {
+      padding: 8px 14px;
+      background: #fff;
+      color: #555;
+      border: 1.5px solid #ccc;
+      border-radius: 6px;
+      font-size: .88rem;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    #btn-cancelar-impressao:hover { background: #f5f5f5; }
+
+    /* ===== LISTA DE VALORES ===== */
+    #lista-valores-wrap {
+      max-height: 260px;
+      overflow-y: auto;
+      border: 1.5px solid #e8eaf6;
+      border-radius: 8px;
+      background: #fafafa;
+      margin-bottom: 10px;
+    }
+    #lista-valores-vazia {
+      padding: 18px;
+      color: #aaa;
+      font-size: .88rem;
+      text-align: center;
+    }
+    .valor-row {
+      display: flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-bottom: 1px solid #efefef;
+      gap: 0;
+      animation: fadeIn .15s;
+    }
+    .valor-row:last-child { border-bottom: none; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+    .valor-row .vr-simbolo {
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #3949ab;
+      min-width: 14px;
+      text-align: right;
+      padding-right: 6px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+    .valor-row .vr-num {
+      flex: 0 0 auto;
+      min-width: 13ch;
+      text-align: right;
+      font-family: 'Courier New', monospace;
+      font-size: 1rem;
+      color: #222;
+      padding-right: 8px;
+    }
+    .valor-row .vr-del {
+      background: none; border: none; color: #e53935; cursor: pointer; font-size: 1rem;
+      padding: 2px 4px; border-radius: 4px; transition: background .15s; flex-shrink: 0;
+    }
+    .valor-row .vr-del:hover { background: #fce4ec; }
+
+    /* ===== RESULTADO ===== */
+    #resultado-box {
+      background: #e8eaf6;
+      border-radius: 8px;
+      padding: 13px 16px;
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #resultado-box .res-label { font-size: .82rem; font-weight: 600; color: #555; }
+    #resultado-box .res-valor {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #1a237e;
+      font-family: 'Courier New', monospace;
+    }
+    #resultado-box .res-valor.erro { color: #e53935; font-size: 1rem; }
+
+    /* ===== BOTOES ACAO ===== */
+    .btn-acao-row { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .btn-acao {
+      flex: 1;
+      min-width: 120px;
+      padding: 11px 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: .92rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .18s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }
+    #btn-calcular { background: #1a237e; color: #fff; }
+    #btn-calcular:hover { background: #283593; }
+    #btn-previsualizar { background: #00897b; color: #fff; }
+    #btn-previsualizar:hover { background: #00695c; }
+    #btn-imprimir { background: #6a1b9a; color: #fff; }
+    #btn-imprimir:hover { background: #4a148c; }
+    #btn-limpar { background: #fff; color: #e53935; border: 1.5px solid #e53935; }
+    #btn-limpar:hover { background: #fce4ec; }
+
+    /* ===== PRE-VISUALIZACAO MODAL ===== */
+    #modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    #modal-overlay.open { display: flex; }
+    #modal-box {
+      background: #fff;
+      border-radius: 12px;
+      width: 480px;
+      max-width: 96vw;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 8px 40px rgba(0,0,0,.3);
+      padding: 28px 32px;
+      position: relative;
+    }
+    #modal-box h3 {
+      font-size: 1rem;
+      color: #1a237e;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 2px solid #e8eaf6;
+      padding-bottom: 10px;
+    }
+    #btn-modal-fechar {
+      position: absolute;
+      top: 14px; right: 16px;
+      background: none; border: none;
+      font-size: 1.4rem; cursor: pointer; color: #888;
+    }
+    #btn-modal-fechar:hover { color: #e53935; }
+    #modal-footer { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+    #btn-modal-imprimir {
+      padding: 10px 22px;
+      background: #6a1b9a; color: #fff;
+      border: none; border-radius: 7px;
+      font-size: .92rem; font-weight: 700; cursor: pointer;
+    }
+    #btn-modal-imprimir:hover { background: #4a148c; }
+    #btn-modal-cancelar {
+      padding: 10px 18px;
+      background: #fff; color: #555;
+      border: 1.5px solid #ccc; border-radius: 7px;
+      font-size: .92rem; font-weight: 600; cursor: pointer;
+    }
+    #btn-modal-cancelar:hover { background: #f5f5f5; }
+
+    /* ===== DOCUMENTO DE PRE-VISUALIZACAO ===== */
+    .doc-preview-wrap {
+      font-family: 'Courier New', monospace;
+      font-size: .92rem;
+      color: #111;
+      line-height: 1.7;
+    }
+    .doc-titulo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: center;
+      letter-spacing: 1px;
+      border-bottom: 2px solid #222;
+      padding-bottom: 6px;
+      margin-bottom: 14px;
+    }
+    .doc-data-hora {
+      text-align: right;
+      font-size: .82rem;
+      margin-bottom: 14px;
+      color: #444;
+    }
+    .doc-coluna {
+      width: auto;
+      margin-left: auto;
+      border-collapse: collapse;
+      margin-bottom: 6px;
+    }
+    .doc-coluna td {
+      padding: 2px 0;
+      font-family: 'Courier New', monospace;
+    }
+    .doc-coluna .td-simbolo {
+      width: 16px;
+      text-align: right;
+      padding-right: 6px;
+      color: #1a237e;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .doc-coluna .td-valor  { text-align: right; min-width: 13ch; padding-left: 0; }
+    .doc-coluna .doc-sep-row td { padding: 0; height: 6px; border-top: 1.5px solid #333; }
+    .doc-separador { border-top: 1.5px solid #333; margin: 4px 0; }
+    .doc-total-row { font-weight: 800; font-size: 1.05rem; border-top: 3px double #111; }
+    .doc-total-row td { padding-top: 4px; }
+    .doc-operacao { font-size: .78rem; color: #555; text-align: right; margin-top: 8px; }
+    .doc-rodape { font-size: .73rem; color: #888; text-align: right; margin-top: 18px; border-top: 1px solid #ddd; padding-top: 8px; }
+    /* Cabeçalho de moeda na coluna do documento */
+    .doc-moeda-header { font-size: .75rem; color: #1a237e; font-weight: 700; text-align: right; margin-bottom: 2px; }
+
+    /* ===== PAINEL DIREITO ===== */
+    #painel-direito .preview-inline {
+      font-family: 'Courier New', monospace;
+      font-size: .85rem;
+      background: #fafafa;
+      border: 1px dashed #b0bec5;
+      border-radius: 8px;
+      padding: 16px;
+      min-height: 180px;
+      color: #333;
+    }
+    #painel-direito .preview-vazio {
+      color: #aaa;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: .85rem;
+      text-align: center;
+      padding: 40px 0;
+    }
+
+    /* ===== DATE/HOUR ROW ===== */
+    .dh-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* ===== TOAST ===== */
+    #toast {
+      position: fixed;
+      bottom: 28px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #323232;
+      color: #fff;
+      padding: 11px 24px;
+      border-radius: 8px;
+      font-size: .88rem;
+      opacity: 0;
+      transition: all .3s;
+      z-index: 2000;
+      pointer-events: none;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ===== SCROLL PERSONALIZADO ===== */
+    #lista-valores-wrap::-webkit-scrollbar { width: 5px; }
+    #lista-valores-wrap::-webkit-scrollbar-thumb { background: #c5cae9; border-radius: 4px; }
+
+    /* ===== @media print ===== */
+    @media print {
+      body > *               { display: none !important; }
+      #doc-impressao-print   { display: block !important; }
+    }
+
+    /* ===== DOCUMENTO REAL DE IMPRESSAO ===== */
+    #doc-impressao-print {
+      display: none;
+      font-family: 'Courier New', monospace;
+      font-size: 12pt;
+      color: #000;
+      padding: 20mm 10mm 20mm 20mm;
+      line-height: 1.8;
+    }
+    #doc-impressao-print .ip-titulo {
+      font-size: 14pt;
+      font-weight: bold;
+      text-align: center;
+      letter-spacing: 1px;
+      border-bottom: 2pt solid #000;
+      padding-bottom: 5mm;
+      margin-bottom: 5mm;
+    }
+    #doc-impressao-print .ip-data-hora {
+      text-align: right;
+      font-size: 10pt;
+      margin-bottom: 5mm;
+    }
+    #doc-impressao-print table.ip-coluna {
+      width: auto;
+      margin-left: auto;
+      border-collapse: collapse;
+    }
+    #doc-impressao-print table.ip-coluna td {
+      font-family: 'Courier New', monospace;
+      font-size: 11pt;
+      padding: 1mm 0;
+    }
+    #doc-impressao-print table.ip-coluna .td-s {
+      width: 6mm;
+      text-align: right;
+      padding-right: 2mm;
+    }
+    #doc-impressao-print table.ip-coluna .td-v { text-align: right; padding-left: 0; min-width: 32mm; }
+    #doc-impressao-print table.ip-coluna .ip-sep-row td { padding: 0; height: 3mm; border-top: 1.5pt solid #000; }
+    #doc-impressao-print .ip-linha-sep { border: none; border-top: 1.5pt solid #000; margin: 2mm 0; }
+    #doc-impressao-print .ip-total-row { font-weight: bold; font-size: 12pt; border-top: 2.5pt double #000; }
+    #doc-impressao-print .ip-total-row td { padding-top: 2mm; }
+    #doc-impressao-print .ip-operacao  { font-size: 9pt; text-align: right; color: #444; margin-top: 3mm; }
+    #doc-impressao-print .ip-rodape    { font-size: 8pt; text-align: right; color: #777; margin-top: 10mm; border-top: 0.5pt solid #999; padding-top: 3mm; }
+    /* Cabeçalho R$ na impressão */
+    #doc-impressao-print .ip-moeda-header { font-size: 9pt; text-align: right; color: #444; margin-bottom: 2mm; }
+  </style>
 </head>
 <body>
 
@@ -144,6 +725,1023 @@
 
 <div id="toast"></div>
 
-<script src="script.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var STORAGE_KEY = 'jls_calc_sessao';
+  var LIMITE_VALORES = 500;
+  var TITULO_MAX_RECOMENDADO = 50;
+
+  var estado = {
+    valores: [],
+    operacao: 'soma',
+    resultado: null,
+    resultadoOk: true,
+    resultadoMsg: '',
+    operacaoDoResultado: null,
+    dataSelecionada: '',
+    horaSelecionada: '',
+    tituloDocumento: '',
+    modoMonetario: false
+  };
+
+  // Guarda o valor bruto pendente de resolução de ambiguidade
+  var ambiguidade = {
+    ativo: false,
+    rawOriginal: '',
+    valorMilhar: 0,
+    valorDecimal: 0
+  };
+
+  var $ = function(id) { return document.getElementById(id); };
+
+  function padZ(n, d) { return String(n).padStart(d, '0'); }
+
+  function dataHoraAtual() {
+    var now = new Date();
+    var d = padZ(now.getDate(), 2) + '/' + padZ(now.getMonth()+1, 2) + '/' + now.getFullYear();
+    var h = padZ(now.getHours(), 2) + ':' + padZ(now.getMinutes(), 2);
+    return { data: d, hora: h };
+  }
+
+  /**
+   * Detecta se a string é ambígua: padrão X.XXX (sem vírgula decimal)
+   * Ex: "1.234" pode ser milhar 1234 ou decimal 1.234
+   * Retorna objeto { ambiguo, valorMilhar, valorDecimal } ou null se não ambíguo.
+   */
+  function detectarAmbiguidade(str) {
+    if (str === null || str === undefined) return null;
+    var s = str.trim();
+    // Padrão ambíguo: [-]D{1,3}.D{3} SEM nenhuma vírgula e sem mais pontos
+    // Ex: "1.234", "-1.234", "12.345"
+    if (/^-?\d{1,3}\.\d{3}$/.test(s)) {
+      var valMilhar = parseFloat(s.replace(/\./g, ''));
+      var valDecimal = parseFloat(s);
+      // Só é realmente ambíguo se ambos são números válidos e diferentes
+      if (!isNaN(valMilhar) && !isNaN(valDecimal) && valMilhar !== valDecimal) {
+        return { ambiguo: true, valorMilhar: valMilhar, valorDecimal: valDecimal };
+      }
+    }
+    return null;
+  }
+
+  function normalizarDecimal(str) {
+    if (str === null || str === undefined) return null;
+    var s = str.trim();
+    if (s === '') return null;
+    // Padrão milhar: X.XXX,XX ou X.XXX (este último pode ser ambíguo — tratado em detectarAmbiguidade)
+    if (/^-?\d{1,3}(\.\d{3})+(,\d+)?$/.test(s)) {
+      s = s.replace(/\./g, '').replace(/,/g, '.');
+      return s;
+    }
+    s = s.replace(/,/g, '.');
+    return s;
+  }
+
+  function validarNumero(str) {
+    if (str === null || str === undefined) return false;
+    var normalizado = normalizarDecimal(str);
+    if (normalizado === null) return false;
+    return /^-?\d+(\.\d+)?$/.test(normalizado);
+  }
+
+  function validarData(str) {
+    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(str)) return false;
+    var parts = str.split('/');
+    var d = parseInt(parts[0], 10);
+    var m = parseInt(parts[1], 10);
+    var y = parseInt(parts[2], 10);
+    if (m < 1 || m > 12 || d < 1 || d > 31 || y < 1900 || y > 2200) return false;
+    var dateObj = new Date(y, m - 1, d);
+    return (
+      dateObj.getFullYear() === y &&
+      dateObj.getMonth() === m - 1 &&
+      dateObj.getDate() === d
+    );
+  }
+
+  function validarHora(str) {
+    if (!/^\d{2}:\d{2}$/.test(str)) return false;
+    var parts = str.split(':');
+    var h = parseInt(parts[0], 10);
+    var mn = parseInt(parts[1], 10);
+    return h >= 0 && h <= 23 && mn >= 0 && mn <= 59;
+  }
+
+  /** Verifica se os campos data/hora estão preenchidos E válidos */
+  function camposDataHoraValidos() {
+    var dataVal  = $('input-data').value.trim();
+    var horaVal  = $('input-hora').value.trim();
+    var dataOk   = dataVal  === '' || (dataVal.length  === 10 && validarData(dataVal));
+    var horaOk   = horaVal  === '' || (horaVal.length  === 5  && validarHora(horaVal));
+    return { dataOk: dataOk, horaOk: horaOk, ok: dataOk && horaOk };
+  }
+
+  function formatarNumero(n) {
+    if (n === null || n === undefined) return '—';
+    if (estado.modoMonetario) {
+      return n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+    return n.toLocaleString('pt-BR', { maximumFractionDigits: 8 });
+  }
+
+  /**
+   * Formata número para documento.
+   * No modo monetário NÃO inclui prefixo R$ aqui — o prefixo é adicionado
+   * apenas no cabeçalho da coluna, evitando redundância.
+   */
+  function formatarNumeroDoc(n) {
+    if (n === null || n === undefined) return '—';
+    if (estado.modoMonetario) {
+      return n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+    return n.toLocaleString('pt-BR', { maximumFractionDigits: 10, useGrouping: true });
+  }
+
+  function simboloOp(op) {
+    var m = { soma: '+', subtracao: '\u2212', multiplicacao: '\u00d7', divisao: '\u00f7' };
+    return m[op] || '+';
+  }
+
+  function nomeOp(op) {
+    var m = { soma: 'Soma', subtracao: 'Subtração', multiplicacao: 'Multiplicação', divisao: 'Divisão' };
+    return m[op] || 'Soma';
+  }
+
+  function arredondarResultado(valor, valores) {
+    if (!isFinite(valor) || isNaN(valor)) return valor;
+    if (estado.modoMonetario) {
+      return parseFloat(valor.toFixed(2));
+    }
+    var maxCasas = 0;
+    valores.forEach(function(v) {
+      var s = v.toString();
+      var dot = s.indexOf('.');
+      if (dot !== -1) {
+        var casas = s.length - dot - 1;
+        if (casas > maxCasas) maxCasas = casas;
+      }
+    });
+    var precisao = Math.min(maxCasas + 2, 10);
+    return parseFloat(valor.toFixed(precisao));
+  }
+
+  function salvarEstado() {
+    try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(estado)); } catch(e) {}
+  }
+
+  function carregarEstado() {
+    try {
+      var raw = sessionStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        var s = JSON.parse(raw);
+        if (Array.isArray(s.valores)) estado.valores = s.valores;
+        if (s.operacao) estado.operacao = s.operacao;
+        if (s.resultado !== undefined) estado.resultado = s.resultado;
+        if (s.operacaoDoResultado !== undefined) estado.operacaoDoResultado = s.operacaoDoResultado;
+        if (s.dataSelecionada) estado.dataSelecionada = s.dataSelecionada;
+        if (s.horaSelecionada) estado.horaSelecionada = s.horaSelecionada;
+        if (s.tituloDocumento !== undefined) estado.tituloDocumento = s.tituloDocumento;
+        if (s.modoMonetario !== undefined) estado.modoMonetario = !!s.modoMonetario;
+      }
+    } catch(e) {}
+  }
+
+  /**
+   * Calcula o resultado e armazena em estado.
+   * Não chama renderizações — apenas atualiza estado.resultado e retorna {ok, msg}.
+   */
+  function calcular() {
+    var vals = estado.valores;
+    if (vals.length === 0) {
+      estado.resultado = null;
+      estado.resultadoOk = false;
+      estado.resultadoMsg = 'Nenhum valor inserido.';
+      estado.operacaoDoResultado = null;
+      return { ok: false, msg: estado.resultadoMsg };
+    }
+    if (vals.length === 1) {
+      estado.resultado = arredondarResultado(vals[0], vals);
+      estado.resultadoOk = true;
+      estado.resultadoMsg = '';
+      estado.operacaoDoResultado = estado.operacao;
+      return { ok: true };
+    }
+
+    var op = estado.operacao;
+    var acc = vals[0];
+
+    for (var i = 1; i < vals.length; i++) {
+      var v = vals[i];
+      if (op === 'soma')               acc += v;
+      else if (op === 'subtracao')     acc -= v;
+      else if (op === 'multiplicacao') acc *= v;
+      else if (op === 'divisao') {
+        if (v === 0) {
+          estado.resultado = null;
+          estado.resultadoOk = false;
+          estado.resultadoMsg = 'Erro: Divisão por zero no valor ' + (i + 1) + '.';
+          estado.operacaoDoResultado = null;
+          return { ok: false, msg: estado.resultadoMsg };
+        }
+        acc /= v;
+      }
+    }
+
+    if (isNaN(acc)) {
+      estado.resultado = null;
+      estado.resultadoOk = false;
+      estado.resultadoMsg = 'Erro: O resultado não é um número válido (NaN).';
+      estado.operacaoDoResultado = null;
+      return { ok: false, msg: estado.resultadoMsg };
+    }
+
+    if (!isFinite(acc)) {
+      estado.resultado = null;
+      estado.resultadoOk = false;
+      estado.resultadoMsg = 'Erro: O resultado excede o limite numérico (Overflow).';
+      estado.operacaoDoResultado = null;
+      return { ok: false, msg: estado.resultadoMsg };
+    }
+
+    acc = arredondarResultado(acc, vals);
+    estado.resultado = acc;
+    estado.resultadoOk = true;
+    estado.resultadoMsg = '';
+    estado.operacaoDoResultado = op;
+    return { ok: true };
+  }
+
+  function escHTML(str) {
+    if (str === null || str === undefined) return '—';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  /**
+   * Gera HTML do documento.
+   * No modo monetário, o símbolo R$ aparece UMA VEZ no cabeçalho da coluna,
+   * e não em cada linha de valor, evitando redundância com o símbolo de operação.
+   */
+  function gerarHTMLDocumento(mode) {
+    var titulo = estado.tituloDocumento || 'CÁLCULO';
+    var data   = estado.dataSelecionada || '—';
+    var hora   = estado.horaSelecionada || '—';
+    var op     = estado.operacao;
+    var simb   = simboloOp(op);
+    var vals   = estado.valores;
+    var res    = estado.resultado;
+    var html   = '';
+    var modoMoeda = estado.modoMonetario;
+    var labelModo = modoMoeda ? ' (Monetário R$)' : '';
+
+    if (mode === 'print') {
+      html += '<div class="ip-titulo">' + escHTML(titulo) + '</div>';
+      html += '<div class="ip-data-hora">Data: ' + escHTML(data) + ' &nbsp;|&nbsp; Hora: ' + escHTML(hora) + '</div>';
+      if (modoMoeda) {
+        // R$ aparece apenas uma vez no cabeçalho da coluna
+        html += '<div class="ip-moeda-header">R$</div>';
+      }
+      html += '<table class="ip-coluna">';
+      vals.forEach(function(v, i) {
+        var s = i === 0 ? '&nbsp;' : escHTML(simb);
+        // formatarNumeroDoc NÃO inclui R$ — apenas o número formatado
+        html += '<tr><td class="td-s">' + s + '</td><td class="td-v">' + escHTML(formatarNumeroDoc(v)) + '</td></tr>';
+      });
+      html += '<tr class="ip-sep-row"><td colspan="2"></td></tr>';
+      if (res !== null && res !== undefined) {
+        html += '<tr class="ip-total-row"><td class="td-s">=</td><td class="td-v">' + escHTML(formatarNumeroDoc(res)) + '</td></tr>';
+      } else {
+        html += '<tr class="ip-total-row"><td class="td-s">=</td><td class="td-v">Erro no cálculo</td></tr>';
+      }
+      html += '</table>';
+      html += '<div class="ip-operacao">Operação: ' + escHTML(nomeOp(op)) + escHTML(labelModo) + '</div>';
+      html += '<div class="ip-rodape">Gerado por JLS SOFT AI FACTORY — Calculadora Avançada</div>';
+    } else {
+      html += '<div class="doc-preview-wrap">';
+      html += '<div class="doc-titulo">' + escHTML(titulo) + '</div>';
+      html += '<div class="doc-data-hora">Data: <b>' + escHTML(data) + '</b> &nbsp;|&nbsp; Hora: <b>' + escHTML(hora) + '</b></div>';
+      if (modoMoeda) {
+        // R$ aparece uma vez no cabeçalho da coluna
+        html += '<div class="doc-moeda-header">R$</div>';
+      }
+      html += '<table class="doc-coluna">';
+      vals.forEach(function(v, i) {
+        var s = i === 0 ? '&nbsp;' : escHTML(simb);
+        html += '<tr><td class="td-simbolo">' + s + '</td><td class="td-valor">' + escHTML(formatarNumeroDoc(v)) + '</td></tr>';
+      });
+      html += '<tr class="doc-sep-row"><td colspan="2"></td></tr>';
+      if (res !== null && res !== undefined) {
+        html += '<tr class="doc-total-row"><td class="td-simbolo">=</td><td class="td-valor">' + escHTML(formatarNumeroDoc(res)) + '</td></tr>';
+      } else {
+        html += '<tr class="doc-total-row"><td class="td-simbolo">=</td><td class="td-valor" style="color:#e53935">—</td></tr>';
+      }
+      html += '</table>';
+      html += '<div class="doc-operacao">Operação aplicada: ' + escHTML(nomeOp(op)) + escHTML(labelModo) + '</div>';
+      html += '<div class="doc-rodape">Gerado por JLS SOFT AI FACTORY — Calculadora Avançada</div>';
+      html += '</div>';
+    }
+
+    return html;
+  }
+
+  function renderLista() {
+    var wrap = $('lista-valores-wrap');
+    wrap.innerHTML = '';
+
+    if (estado.valores.length === 0) {
+      var vazia = document.createElement('div');
+      vazia.id = 'lista-valores-vazia';
+      vazia.textContent = 'Nenhum valor adicionado ainda.';
+      wrap.appendChild(vazia);
+      return;
+    }
+
+    var simb = simboloOp(estado.operacao);
+
+    estado.valores.forEach(function(v, i) {
+      var row = document.createElement('div');
+      row.className = 'valor-row';
+
+      var spanSimb = document.createElement('span');
+      spanSimb.className = 'vr-simbolo';
+      spanSimb.textContent = i === 0 ? '' : simb;
+
+      var spanNum = document.createElement('span');
+      spanNum.className = 'vr-num';
+      spanNum.textContent = formatarNumero(v);
+
+      var btnDel = document.createElement('button');
+      btnDel.className = 'vr-del';
+      btnDel.title = 'Remover este valor';
+      btnDel.textContent = '\u2715';
+      (function(idx) {
+        btnDel.addEventListener('click', function() {
+          estado.valores.splice(idx, 1);
+          var r;
+          if (estado.valores.length > 0) {
+            r = calcular();
+          } else {
+            estado.resultado = null;
+            estado.resultadoOk = false;
+            estado.resultadoMsg = '';
+            estado.operacaoDoResultado = null;
+            r = { ok: true }; // lista vazia, sem erro
+          }
+          salvarEstado();
+          renderLista();
+          // Exibe erro no span-resultado se o cálculo após remoção falhou
+          if (!r.ok) {
+            var span = $('span-resultado');
+            span.textContent = r.msg;
+            span.className = 'res-valor erro';
+          } else {
+            renderResultado();
+          }
+          renderPreviewRapida();
+          mostrarMsgLimite();
+        });
+      }(i));
+
+      row.appendChild(spanSimb);
+      row.appendChild(spanNum);
+      row.appendChild(btnDel);
+      wrap.appendChild(row);
+    });
+  }
+
+  function renderResultado() {
+    var span = $('span-resultado');
+    if (estado.resultado === null || estado.resultado === undefined) {
+      span.textContent = '—';
+      span.className = 'res-valor';
+    } else {
+      span.textContent = (estado.modoMonetario ? 'R$ ' : '') + formatarNumero(estado.resultado);
+      span.className = 'res-valor';
+    }
+  }
+
+  function mostrarMsgLimite() {
+    var el = $('msg-limite');
+    if (estado.valores.length >= LIMITE_VALORES) el.classList.add('visible');
+    else el.classList.remove('visible');
+  }
+
+  /**
+   * Renderiza a pré-visualização rápida.
+   * NÃO chama calcular() internamente — o chamador deve garantir que
+   * calcular() foi chamado antes quando necessário.
+   */
+  function renderPreviewRapida() {
+    var box = $('preview-rapida');
+    if (estado.valores.length === 0) {
+      box.innerHTML = '<div class="preview-vazio">Adicione valores e clique em <b>Calcular</b> ou <b>Pré-visualizar</b> para ver o documento aqui.</div>';
+      return;
+    }
+    box.innerHTML = gerarHTMLDocumento('screen');
+  }
+
+  function atualizarUIModeMoeda() {
+    var badge = $('moeda-badge');
+    var prefix = $('valor-prefix');
+    var inputValor = $('input-valor');
+    if (estado.modoMonetario) {
+      badge.textContent = 'Ativado 💰';
+      badge.classList.add('ativo');
+      prefix.classList.add('visible');
+      inputValor.classList.add('com-prefix');
+      inputValor.placeholder = 'Ex: 1.250,00 ou 1250.50';
+    } else {
+      badge.textContent = 'Desativado';
+      badge.classList.remove('ativo');
+      prefix.classList.remove('visible');
+      inputValor.classList.remove('com-prefix');
+      inputValor.placeholder = 'Ex: 1234.56 ou 1.234,56 ou -99';
+    }
+  }
+
+  var toastTimer = null;
+  function showToast(msg, dur) {
+    var el = $('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function() { el.classList.remove('show'); }, dur || 2800);
+  }
+
+  // ===== AMBIGUIDADE: UI =====
+  function fecharAmbiguidade() {
+    ambiguidade.ativo = false;
+    $('msg-ambiguidade').classList.remove('visible');
+    $('input-valor').value = '';
+    $('input-valor').focus();
+  }
+
+  function confirmarValorAmbiguo(num) {
+    fecharAmbiguidade();
+    if (estado.valores.length >= LIMITE_VALORES) {
+      mostrarMsgLimite();
+      showToast('🚫 Limite de ' + LIMITE_VALORES + ' valores atingido.');
+      return;
+    }
+    if (estado.modoMonetario) {
+      num = parseFloat(num.toFixed(2));
+    }
+    estado.valores.push(num);
+    var r = calcular();
+    salvarEstado();
+    renderLista();
+    if (!r.ok) {
+      $('span-resultado').textContent = r.msg;
+      $('span-resultado').className = 'res-valor erro';
+    } else {
+      renderResultado();
+    }
+    renderPreviewRapida();
+    mostrarMsgLimite();
+  }
+
+  function mostrarAmbiguidade(raw, valMilhar, valDecimal) {
+    ambiguidade.ativo = true;
+    ambiguidade.rawOriginal = raw;
+    ambiguidade.valorMilhar = valMilhar;
+    ambiguidade.valorDecimal = valDecimal;
+
+    var fmt = estado.modoMonetario;
+    var fmtMilhar  = valMilhar.toLocaleString('pt-BR', fmt ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : { maximumFractionDigits: 8 });
+    var fmtDecimal = valDecimal.toLocaleString('pt-BR', { maximumFractionDigits: 8 });
+
+    $('amb-texto').textContent = '⚠ O valor "' + raw + '" é ambíguo. Ele pode ser:';
+    $('amb-btn-milhar').textContent  = '✔ Milhar: ' + fmtMilhar  + (fmt ? ' (R$)' : '');
+    $('amb-btn-decimal').textContent = '✔ Decimal: ' + fmtDecimal;
+    $('msg-ambiguidade').classList.add('visible');
+    $('input-valor').classList.remove('invalid');
+    $('msg-valor-invalido').classList.remove('visible');
+  }
+
+  // ===== IMPRESSORA: UI =====
+  function mostrarPainelImpressora() {
+    $('impressora-panel').classList.add('visible');
+    $('select-impressora').focus();
+  }
+
+  function fecharPainelImpressora() {
+    $('impressora-panel').classList.remove('visible');
+  }
+
+  // ===== MASCARAS =====
+  function mascaraData(el) {
+    el.addEventListener('input', function () {
+      var digits = this.value.replace(/\D/g, '').slice(0, 8);
+      var formatted = '';
+      if (digits.length <= 2) {
+        formatted = digits;
+      } else if (digits.length <= 4) {
+        formatted = digits.slice(0, 2) + '/' + digits.slice(2);
+      } else {
+        formatted = digits.slice(0, 2) + '/' + digits.slice(2, 4) + '/' + digits.slice(4);
+      }
+      this.value = formatted;
+      estado.dataSelecionada = formatted;
+      salvarEstado();
+
+      var errEl = $('err-data');
+      if (formatted.length === 10) {
+        if (!validarData(formatted)) {
+          this.classList.add('invalid');
+          errEl.classList.add('visible');
+        } else {
+          this.classList.remove('invalid');
+          errEl.classList.remove('visible');
+        }
+      } else {
+        this.classList.remove('invalid');
+        errEl.classList.remove('visible');
+      }
+    });
+
+    el.addEventListener('keydown', function(e) {
+      if (e.key === 'Backspace') {
+        var pos = this.selectionStart;
+        if (this.selectionStart === this.selectionEnd && (pos === 3 || pos === 6)) {
+          e.preventDefault();
+          var v = this.value;
+          var newVal = v.slice(0, pos - 1) + v.slice(pos);
+          var digits = newVal.replace(/\D/g, '').slice(0, 8);
+          var formatted = '';
+          if (digits.length <= 2) {
+            formatted = digits;
+          } else if (digits.length <= 4) {
+            formatted = digits.slice(0, 2) + '/' + digits.slice(2);
+          } else {
+            formatted = digits.slice(0, 2) + '/' + digits.slice(2, 4) + '/' + digits.slice(4);
+          }
+          this.value = formatted;
+          var novPos = pos - 1;
+          this.setSelectionRange(novPos, novPos);
+          estado.dataSelecionada = formatted;
+          salvarEstado();
+          var errEl = $('err-data');
+          if (formatted.length === 10) {
+            if (!validarData(formatted)) { this.classList.add('invalid'); errEl.classList.add('visible'); }
+            else { this.classList.remove('invalid'); errEl.classList.remove('visible'); }
+          } else {
+            this.classList.remove('invalid');
+            errEl.classList.remove('visible');
+          }
+        }
+      }
+    });
+  }
+
+  function mascaraHora(el) {
+    el.addEventListener('input', function () {
+      // Remove não-dígitos, limita a 4 dígitos
+      var digits = this.value.replace(/\D/g, '').slice(0, 4);
+      var formatted = '';
+      if (digits.length <= 2) {
+        formatted = digits;
+      } else {
+        formatted = digits.slice(0, 2) + ':' + digits.slice(2);
+      }
+      // Controle de comprimento via JS (remove maxlength do HTML)
+      if (formatted.length > 5) { formatted = formatted.slice(0, 5); }
+      this.value = formatted;
+      estado.horaSelecionada = formatted;
+      salvarEstado();
+
+      var errEl = $('err-hora');
+      // Validação progressiva: ao preencher os 2 primeiros dígitos da hora, verifica imediatamente
+      if (digits.length >= 2) {
+        var horaDigit = parseInt(digits.slice(0, 2), 10);
+        if (horaDigit > 23) {
+          this.classList.add('invalid');
+          errEl.classList.add('visible');
+          return; // já alerta sem esperar os minutos
+        }
+      }
+      // Validação completa ao preencher os 4 dígitos (HH:MM)
+      if (formatted.length === 5) {
+        if (!validarHora(formatted)) {
+          this.classList.add('invalid');
+          errEl.classList.add('visible');
+        } else {
+          this.classList.remove('invalid');
+          errEl.classList.remove('visible');
+        }
+      } else {
+        this.classList.remove('invalid');
+        errEl.classList.remove('visible');
+      }
+    });
+
+    el.addEventListener('keydown', function(e) {
+      if (e.key === 'Backspace') {
+        var pos = this.selectionStart;
+        if (this.selectionStart === this.selectionEnd && pos === 3) {
+          e.preventDefault();
+          var v = this.value;
+          var newVal = v.slice(0, pos - 1) + v.slice(pos);
+          var digits = newVal.replace(/\D/g, '').slice(0, 4);
+          var formatted = digits.length <= 2 ? digits : digits.slice(0, 2) + ':' + digits.slice(2);
+          this.value = formatted;
+          var novPos = pos - 1;
+          this.setSelectionRange(novPos, novPos);
+          estado.horaSelecionada = formatted;
+          salvarEstado();
+          var errEl = $('err-hora');
+          if (formatted.length === 5) {
+            if (!validarHora(formatted)) { this.classList.add('invalid'); errEl.classList.add('visible'); }
+            else { this.classList.remove('invalid'); errEl.classList.remove('visible'); }
+          } else {
+            this.classList.remove('invalid');
+            errEl.classList.remove('visible');
+          }
+        }
+      }
+    });
+  }
+
+  function initUI() {
+    var dh = dataHoraAtual();
+    if (!estado.dataSelecionada) estado.dataSelecionada = dh.data;
+    if (!estado.horaSelecionada) estado.horaSelecionada = dh.hora;
+
+    $('input-data').value   = estado.dataSelecionada;
+    $('input-hora').value   = estado.horaSelecionada;
+    $('input-titulo').value = estado.tituloDocumento || '';
+    $('toggle-moeda').checked = estado.modoMonetario;
+
+    document.querySelectorAll('.op-btn').forEach(function(btn) {
+      btn.classList.toggle('active', btn.dataset.op === estado.operacao);
+    });
+
+    atualizarUIModeMoeda();
+    renderLista();
+    renderResultado();
+    // renderPreviewRapida requer calcular() antes se há valores
+    if (estado.valores.length > 0) {
+      calcular();
+    }
+    renderPreviewRapida();
+    mostrarMsgLimite();
+  }
+
+  function bindEventos() {
+
+    $('input-titulo').addEventListener('input', function () {
+      estado.tituloDocumento = this.value;
+      salvarEstado();
+      var msgEl = $('msg-titulo-longo');
+      if (this.value.length > TITULO_MAX_RECOMENDADO) {
+        msgEl.classList.add('visible');
+      } else {
+        msgEl.classList.remove('visible');
+      }
+    });
+
+    mascaraData($('input-data'));
+    mascaraHora($('input-hora'));
+
+    // ===== ESCAPE fecha o modal =====
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        if ($('modal-overlay').classList.contains('open')) {
+          $('modal-overlay').classList.remove('open');
+        }
+        if ($('impressora-panel').classList.contains('visible')) {
+          fecharPainelImpressora();
+        }
+        if ($('msg-ambiguidade').classList.contains('visible')) {
+          fecharAmbiguidade();
+        }
+      }
+    });
+
+    $('toggle-moeda').addEventListener('change', function () {
+      estado.modoMonetario = this.checked;
+      salvarEstado();
+      atualizarUIModeMoeda();
+      if (estado.valores.length > 0) {
+        calcular();
+      }
+      renderLista();
+      renderResultado();
+      renderPreviewRapida();
+      if (estado.modoMonetario) {
+        showToast('💰 Modo monetário ativado — valores formatados em R$');
+      } else {
+        showToast('Modo monetário desativado');
+      }
+    });
+
+    document.querySelectorAll('.op-btn').forEach(function(btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.op-btn').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        estado.operacao = this.dataset.op;
+        if (estado.valores.length > 0) {
+          calcular();
+        } else {
+          estado.resultado = null;
+          estado.operacaoDoResultado = null;
+        }
+        salvarEstado();
+        renderLista();
+        renderResultado();
+        renderPreviewRapida();
+      });
+    });
+
+    // ===== AMBIGUIDADE: botões =====
+    $('amb-btn-milhar').addEventListener('click', function() {
+      confirmarValorAmbiguo(ambiguidade.valorMilhar);
+    });
+    $('amb-btn-decimal').addEventListener('click', function() {
+      confirmarValorAmbiguo(ambiguidade.valorDecimal);
+    });
+    $('amb-btn-cancelar').addEventListener('click', function() {
+      fecharAmbiguidade();
+    });
+
+    // ===== IMPRESSORA: botões =====
+    $('btn-confirmar-impressao').addEventListener('click', function() {
+      fecharPainelImpressora();
+      var sel = $('select-impressora').value;
+      showToast('🖨️ Abrindo diálogo de impressão' + (sel !== '__custom__' ? ' — selecione "' + $('select-impressora').options[$('select-impressora').selectedIndex].text + '" no diálogo do sistema.' : '.'), 3500);
+      setTimeout(function() { executarImpressao(); }, 300);
+    });
+    $('btn-cancelar-impressao').addEventListener('click', function() {
+      fecharPainelImpressora();
+    });
+
+    function adicionarValor() {
+      var inp = $('input-valor');
+      var raw = inp.value.trim();
+      var msgEl = $('msg-valor-invalido');
+
+      // Fecha painel de ambiguidade pendente se usuário digitou novo valor
+      if (ambiguidade.ativo) {
+        fecharAmbiguidade();
+      }
+
+      if (raw === '') {
+        inp.classList.add('invalid');
+        msgEl.classList.add('visible');
+        inp.focus();
+        return;
+      }
+
+      if (!validarNumero(raw)) {
+        inp.classList.add('invalid');
+        msgEl.classList.add('visible');
+        inp.focus();
+        return;
+      }
+
+      if (estado.valores.length >= LIMITE_VALORES) {
+        mostrarMsgLimite();
+        showToast('\uD83D\uDEAB Limite de ' + LIMITE_VALORES + ' valores atingido.');
+        inp.focus();
+        return;
+      }
+
+      // Detecta ambiguidade ANTES de adicionar
+      var amb = detectarAmbiguidade(raw);
+      if (amb && amb.ambiguo) {
+        mostrarAmbiguidade(raw, amb.valorMilhar, amb.valorDecimal);
+        return; // aguarda escolha do usuário
+      }
+
+      inp.classList.remove('invalid');
+      msgEl.classList.remove('visible');
+
+      var normalizado = normalizarDecimal(raw);
+      var num = parseFloat(normalizado);
+      if (isNaN(num)) {
+        inp.classList.add('invalid');
+        msgEl.classList.add('visible');
+        inp.focus();
+        return;
+      }
+
+      if (estado.modoMonetario) {
+        num = parseFloat(num.toFixed(2));
+      }
+
+      estado.valores.push(num);
+      var r = calcular();
+      salvarEstado();
+      inp.value = '';
+      inp.focus();
+      renderLista();
+      if (!r.ok) {
+        $('span-resultado').textContent = r.msg;
+        $('span-resultado').className = 'res-valor erro';
+      } else {
+        renderResultado();
+      }
+      renderPreviewRapida();
+      mostrarMsgLimite();
+    }
+
+    $('btn-add-valor').addEventListener('click', adicionarValor);
+
+    $('input-valor').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        adicionarValor();
+      }
+    });
+
+    $('input-valor').addEventListener('input', function () {
+      if (this.classList.contains('invalid') && validarNumero(this.value.trim())) {
+        this.classList.remove('invalid');
+        $('msg-valor-invalido').classList.remove('visible');
+      }
+    });
+
+    $('btn-calcular').addEventListener('click', function () {
+      if (estado.valores.length === 0) { showToast('⚠ Adicione ao menos um valor antes de calcular.'); return; }
+      var r = calcular();
+      salvarEstado();
+      if (!r.ok) {
+        $('span-resultado').textContent = r.msg;
+        $('span-resultado').className = 'res-valor erro';
+        showToast('❌ ' + r.msg, 3500);
+      } else {
+        renderResultado();
+        showToast('✅ Cálculo realizado com sucesso!');
+      }
+      renderPreviewRapida();
+    });
+
+    $('btn-previsualizar').addEventListener('click', function () {
+      if (estado.valores.length === 0) { showToast('⚠ Adicione ao menos um valor para pré-visualizar.'); return; }
+
+      // Verifica data/hora antes de pré-visualizar
+      var dhVal = camposDataHoraValidos();
+      if (!dhVal.ok) {
+        if (!dhVal.dataOk) { $('input-data').classList.add('invalid'); $('err-data').classList.add('visible'); }
+        if (!dhVal.horaOk) { $('input-hora').classList.add('invalid'); $('err-hora').classList.add('visible'); }
+        showToast('⚠ Corrija os campos de data/hora antes de pré-visualizar.', 3500);
+        return;
+      }
+
+      var r = calcular();
+      salvarEstado();
+      renderResultado();
+      renderPreviewRapida();
+      if (!r.ok) {
+        showToast('❌ ' + r.msg, 3500);
+      }
+      $('doc-previsualizar').innerHTML = gerarHTMLDocumento('screen');
+      $('modal-overlay').classList.add('open');
+    });
+
+    $('btn-imprimir').addEventListener('click', function () {
+      if (estado.valores.length === 0) { showToast('⚠ Adicione ao menos um valor para imprimir.'); return; }
+
+      // Verifica data/hora antes de imprimir
+      var dhVal = camposDataHoraValidos();
+      if (!dhVal.ok) {
+        if (!dhVal.dataOk) { $('input-data').classList.add('invalid'); $('err-data').classList.add('visible'); }
+        if (!dhVal.horaOk) { $('input-hora').classList.add('invalid'); $('err-hora').classList.add('visible'); }
+        showToast('⚠ Corrija os campos de data/hora antes de imprimir.', 3500);
+        return;
+      }
+
+      var r = calcular();
+      salvarEstado();
+      if (!r.ok) {
+        showToast('❌ ' + r.msg, 3500);
+        renderResultado();
+        renderPreviewRapida();
+        return;
+      }
+      renderResultado();
+      renderPreviewRapida();
+      // Mostra painel de seleção de impressora
+      mostrarPainelImpressora();
+    });
+
+    $('btn-limpar').addEventListener('click', function () {
+      if (!confirm('Deseja realmente limpar todos os valores e reiniciar o cálculo?')) return;
+      var dh = dataHoraAtual();
+      estado.valores            = [];
+      estado.operacao           = 'soma';
+      estado.resultado          = null;
+      estado.resultadoOk        = true;
+      estado.resultadoMsg       = '';
+      estado.operacaoDoResultado = null;
+      estado.dataSelecionada    = dh.data;
+      estado.horaSelecionada    = dh.hora;
+      estado.tituloDocumento    = '';
+      estado.modoMonetario      = false;
+      try { sessionStorage.removeItem(STORAGE_KEY); } catch(e) {}
+
+      $('input-titulo').value = '';
+      $('input-data').value   = dh.data;
+      $('input-hora').value   = dh.hora;
+      $('input-valor').value  = '';
+      $('toggle-moeda').checked = false;
+      $('input-valor').classList.remove('invalid');
+      $('msg-valor-invalido').classList.remove('visible');
+      $('msg-limite').classList.remove('visible');
+      $('msg-titulo-longo').classList.remove('visible');
+      $('msg-ambiguidade').classList.remove('visible');
+      $('input-data').classList.remove('invalid');
+      $('input-hora').classList.remove('invalid');
+      $('err-data').classList.remove('visible');
+      $('err-hora').classList.remove('visible');
+      fecharPainelImpressora();
+
+      document.querySelectorAll('.op-btn').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.op === 'soma');
+      });
+
+      atualizarUIModeMoeda();
+      renderLista();
+      renderResultado();
+      renderPreviewRapida();
+      showToast('🗑 Calculadora reiniciada.');
+    });
+
+    $('btn-modal-fechar').addEventListener('click',   function() { $('modal-overlay').classList.remove('open'); });
+    $('btn-modal-cancelar').addEventListener('click', function() { $('modal-overlay').classList.remove('open'); });
+    $('modal-overlay').addEventListener('click', function (e) {
+      if (e.target === this) this.classList.remove('open');
+    });
+
+    $('btn-modal-imprimir').addEventListener('click', function () {
+      $('modal-overlay').classList.remove('open');
+      // Verifica data/hora antes de imprimir a partir do modal
+      var dhVal = camposDataHoraValidos();
+      if (!dhVal.ok) {
+        if (!dhVal.dataOk) { $('input-data').classList.add('invalid'); $('err-data').classList.add('visible'); }
+        if (!dhVal.horaOk) { $('input-hora').classList.add('invalid'); $('err-hora').classList.add('visible'); }
+        showToast('⚠ Corrija os campos de data/hora antes de imprimir.', 3500);
+        return;
+      }
+      setTimeout(function() { mostrarPainelImpressora(); }, 200);
+    });
+  }
+
+  /**
+   * Executa a impressão usando window.print().
+   * Usa window.matchMedia('print') para detectar eventos do ciclo de impressão
+   * e informar o usuário sobre início e possíveis falhas.
+   */
+  function executarImpressao() {
+    $('doc-impressao-print').innerHTML = gerarHTMLDocumento('print');
+
+    // Feedback via matchMedia print
+    var mediaQueryList = window.matchMedia('print');
+    var jaNotificouInicio = false;
+    function handlePrintChange(mql) {
+      if (mql.matches) {
+        // Entrou no modo de impressão
+        jaNotificouInicio = true;
+      } else {
+        // Saiu do modo de impressão (usuário confirmou ou cancelou)
+        if (jaNotificouInicio) {
+          showToast('✅ Documento enviado para impressão. Verifique sua impressora.', 3500);
+        }
+        if (mediaQueryList.removeEventListener) {
+          mediaQueryList.removeEventListener('change', handlePrintChange);
+        } else if (mediaQueryList.removeListener) {
+          mediaQueryList.removeListener(handlePrintChange);
+        }
+      }
+    }
+    if (mediaQueryList.addEventListener) {
+      mediaQueryList.addEventListener('change', handlePrintChange);
+    } else if (mediaQueryList.addListener) {
+      mediaQueryList.addListener(handlePrintChange);
+    }
+
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        try {
+          window.print();
+        } catch(e) {
+          showToast('❌ Não foi possível abrir o diálogo de impressão. Verifique as permissões do navegador.', 4000);
+        }
+      });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    carregarEstado();
+    initUI();
+    bindEventos();
+  });
+
+}());
+</script>
 </body>
 </html>
